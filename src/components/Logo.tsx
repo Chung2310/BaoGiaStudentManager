@@ -186,29 +186,38 @@ export const ELearnLogo: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 export const IgenTechLogo: React.FC<{ className?: string }> = ({ className }) => (
-  <svg
-    viewBox="0 0 300 60"
+  <div
     className={className}
-    style={{ height: "40px", width: "auto" }}
-    xmlns="http://www.w3.org/2000/svg"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+    }}
   >
-    {/* Stylized Node icon representing iGen Tech */}
-    <g transform="translate(5, 10)">
-      <circle cx="20" cy="20" r="14" fill="none" stroke="#1D5FA3" strokeWidth="3" />
-      <circle cx="20" cy="20" r="6" fill="#00D2FF" />
-    </g>
-    <text
-      x="48"
-      y="38"
-      fontFamily="'Outfit', 'Inter', sans-serif"
-      fontSize="24"
-      fontWeight="900"
-      fill="#1D5FA3"
-      letterSpacing="0.5"
+    <img
+      src="https://res.cloudinary.com/dgaofuhmv/image/upload/v1775301001/unnamed_tcmlmp.png"
+      alt="iGen ERP Logo"
+      style={{
+        height: "40px",
+        width: "40px",
+        borderRadius: "10px",
+        objectFit: "cover",
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+      }}
+    />
+
+    <span
+      style={{
+        fontFamily: "'Outfit', 'Inter', sans-serif",
+        fontSize: "24px",
+        fontWeight: 900,
+        color: "#1D5FA3",
+        letterSpacing: "0.5px",
+      }}
     >
       iGen Technology
-    </text>
-  </svg>
+    </span>
+  </div>
 );
 
 export const IgenHrmLogo: React.FC<{ className?: string }> = ({ className }) => (

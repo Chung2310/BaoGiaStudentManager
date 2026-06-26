@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IgenErpLogo } from "./components/Logo";
+import { IgenErpLogo, IgenTechLogo } from "./components/Logo";
 import { PricingTable } from "./components/PricingTable";
 import { FeatureTable } from "./components/FeatureTable";
 import { ServiceTable } from "./components/ServiceTable";
@@ -23,7 +23,7 @@ const PrintFooter: React.FC = () => (
   <div className="print-only-footer">
     <div className="footer-top-row">
       <div className="footer-left">
-        <IgenErpLogo style={{ height: "38px" }} />
+        <IgenTechLogo />
         <div className="footer-address-block">
           <div className="address-item">
             <strong>🏢 Đơn vị chủ quản:</strong> CÔNG TY CỔ PHẦN CÔNG NGHỆ IGEN
@@ -192,7 +192,7 @@ export const App: React.FC = () => {
         {isAdminMode && currentUser ? (
           <AdminDashboard />
         ) : (
-        <>
+          <>
             {/* Floating Print Panel - chỉ hiện trên màn hình */}
             {!isAdminMode && (
               <div className="print-float-panel" id="print-float-panel">
@@ -252,7 +252,7 @@ export const App: React.FC = () => {
         <div className="footer-container">
           <div className="footer-top-row">
             <div className="footer-left">
-              <IgenErpLogo style={{ height: "38px" }} />
+              <IgenTechLogo />
               <div className="footer-address-block">
                 <div className="address-item">
                   <strong>🏢 Đơn vị chủ quản:</strong> CÔNG TY CỔ PHẦN CÔNG NGHỆ IGEN
