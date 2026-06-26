@@ -31,7 +31,7 @@ export const IgenErpLogo: React.FC<{ className?: string; style?: React.CSSProper
       />
       <div style={{ display: "flex", flexDirection: "column", lineHeight: "1.0", textAlign: "left" }}>
         <span style={{ fontSize: titleSize, fontWeight: "900", color: "#1D5FA3", letterSpacing: "0.5px" }}>iGen</span>
-        <span style={{ fontSize: subSize, fontWeight: "800", color: "#00aeca", letterSpacing: "0.5px" }}>ERP</span>
+        <span style={{ fontSize: subSize, fontWeight: "800", color: "#00aeca", letterSpacing: "0.5px" }}>Technology</span>
       </div>
     </div>
   );
