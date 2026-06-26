@@ -292,6 +292,11 @@ body {
 }
 
 /* Features Table specifics */
+.features-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .features-table th.main-section-header {
   background-color: var(--primary-color);
   font-size: 22px;
@@ -300,17 +305,16 @@ body {
 }
 
 .col-feat-name {
-  width: 20%;
+  width: 18%;
+  min-width: 110px;
   background-color: #2471c2 !important;
 }
 
 .col-feat-basic {
-  width: 40%;
   background-color: #1a5694 !important;
 }
 
 .col-feat-plus {
-  width: 40%;
   background-color: #144373 !important;
 }
 
@@ -358,6 +362,11 @@ body {
 }
 
 /* Services Table specifics */
+.services-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .services-table th.main-section-header {
   background-color: var(--primary-color);
   font-size: 22px;
@@ -366,17 +375,16 @@ body {
 }
 
 .col-srv-name {
-  width: 25%;
+  width: 22%;
+  min-width: 120px;
   background-color: #2471c2 !important;
 }
 
 .col-srv-basic {
-  width: 37.5%;
   background-color: #1a5694 !important;
 }
 
 .col-srv-plus {
-  width: 37.5%;
   background-color: #144373 !important;
 }
 

@@ -48,6 +48,20 @@ export const FeatureTable: React.FC = () => {
   // Get unique groups in order of packages
   const uniqueGroups = Array.from(new Set(packages.map((p) => p.group)));
 
+  // Dynamic column widths
+  const NAME_COL_PCT = 18;
+  const contentColPct = Math.floor((100 - NAME_COL_PCT) / Math.max(uniqueGroups.length, 1));
+  const isCompact = uniqueGroups.length >= 3;
+
+  const nameColStyle: React.CSSProperties = { width: `${NAME_COL_PCT}%` };
+  const contentColStyle: React.CSSProperties = { width: `${contentColPct}%` };
+  const cellStyle: React.CSSProperties = isCompact
+    ? { fontSize: "11px", padding: "8px 8px" }
+    : { fontSize: "13px", padding: "10px 12px" };
+  const catCellStyle: React.CSSProperties = isCompact
+    ? { fontSize: "13px" }
+    : {};
+
   const getGroupHeaderClass = (groupName: string) => {
     const normalized = groupName.toLowerCase();
     if (normalized === "basic") return "col-feat-basic";
@@ -55,22 +69,29 @@ export const FeatureTable: React.FC = () => {
     return "";
   };
 
-  const getGroupHeaderStyle = (groupName: string) => {
+  const getGroupHeaderStyle = (groupName: string): React.CSSProperties => {
     const normalized = groupName.toLowerCase();
-    if (normalized === "basic" || normalized === "plus") return {};
     const colorMap: Record<string, string> = {
+      basic: "#1a5694",
+      plus: "#144373",
       premium: "#0e4a85",
       enterprise: "#0a3661",
       pro: "#1d5fa3",
     };
     const bg = colorMap[normalized] || "#154f8a";
-    return { backgroundColor: bg };
+    return { backgroundColor: bg, ...contentColStyle };
   };
 
   return (
     <div className="table-container fade-in">
       <div className="features-table-wrapper">
         <table className="pdf-style-table features-table">
+          <colgroup>
+            <col style={nameColStyle} />
+            {uniqueGroups.map((group) => (
+              <col key={group} style={contentColStyle} />
+            ))}
+          </colgroup>
           <thead>
             <tr>
               <th colSpan={uniqueGroups.length + 1} className="main-section-header">
@@ -78,7 +99,7 @@ export const FeatureTable: React.FC = () => {
               </th>
             </tr>
             <tr>
-              <th className="col-feat-name">Tính năng</th>
+              <th className="col-feat-name" style={nameColStyle}>Tính năng</th>
               {uniqueGroups.map((group) => (
                 <th
                   key={group}
@@ -93,7 +114,12 @@ export const FeatureTable: React.FC = () => {
           <tbody>
             {items.map((item) => (
               <tr key={item._id}>
-                <td className="feat-cat-cell font-bold text-center">{item.category}</td>
+                <td
+                  className="feat-cat-cell font-bold text-center"
+                  style={catCellStyle}
+                >
+                  {item.category}
+                </td>
                 {uniqueGroups.map((group) => {
                   const bulletPoints = item.contents ? item.contents[group] : undefined;
                   const isNoIntegration =
@@ -102,7 +128,7 @@ export const FeatureTable: React.FC = () => {
                     (bulletPoints.length === 1 && bulletPoints[0] === "Không tích hợp");
 
                   return (
-                    <td className="feat-content-cell" key={group}>
+                    <td className="feat-content-cell" key={group} style={cellStyle}>
                       {isNoIntegration ? (
                         <span className="no-integration">
                           {bulletPoints && bulletPoints.length === 1 ? bulletPoints[0] : "Không tích hợp"}
