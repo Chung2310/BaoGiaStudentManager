@@ -1,0 +1,400 @@
+import swaggerJSDoc from "swagger-jsdoc";
+
+const swaggerDefinition = {
+  openapi: "3.0.0",
+  info: {
+    title: "iGen ERP Price Quotation API",
+    version: "1.0.0",
+    description: "Tài liệu API cho Hệ thống Báo giá và So sánh Tính năng iGen ERP (MongoDB)",
+  },
+  servers: [
+    {
+      url: "/api/v1",
+      description: "Local API v1 Server",
+    },
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "Nhập Access Token được cấp sau khi đăng nhập thành công",
+      },
+    },
+    schemas: {
+      User: {
+        type: "object",
+        properties: {
+          uid: { type: "string" },
+          email: { type: "string" },
+          displayName: { type: "string" },
+        },
+      },
+      Pricing: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          studentRange: { type: "string", example: "0 - 100" },
+          basic6Month: { type: "number", example: 3 },
+          basic12Month: { type: "number", example: 5 },
+          plusFirstYear: { type: "number", example: 8 },
+          plusNextYears: { type: "number", example: 6 },
+          order: { type: "number", example: 1 },
+        },
+      },
+      Feature: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          category: { type: "string", example: "Đào tạo" },
+          basicContent: {
+            type: "array",
+            items: { type: "string" },
+            example: ["Quản lý chương trình học...", "App giáo viên"],
+          },
+          plusContent: {
+            type: "array",
+            items: { type: "string" },
+            example: ["Full tính năng", "App giáo viên"],
+          },
+          order: { type: "number", example: 1 },
+        },
+      },
+      Service: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          serviceName: { type: "string", example: "Số lần đào tạo tại trung tâm" },
+          basicContent: {
+            type: "array",
+            items: { type: "string" },
+            example: ["Hỗ trợ đào tạo trực tiếp 01 lần/năm"],
+          },
+          plusContent: {
+            type: "array",
+            items: { type: "string" },
+            example: ["Hỗ trợ đào tạo trực tiếp 02 lần"],
+          },
+          order: { type: "number", example: 1 },
+        },
+      },
+    },
+  },
+  paths: {
+    "/auth/register": {
+      post: {
+        summary: "Đăng ký tài khoản quản trị mới",
+        tags: ["Auth"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["email", "password", "displayName"],
+                properties: {
+                  email: { type: "string", example: "admin@igen-erp.com" },
+                  password: { type: "string", example: "AdminPass123" },
+                  displayName: { type: "string", example: "Admin Báo Giá" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: { description: "Đăng ký thành công" },
+          400: { description: "Dữ liệu không hợp lệ hoặc email đã tồn tại" },
+        },
+      },
+    },
+    "/auth/login": {
+      post: {
+        summary: "Đăng nhập hệ thống",
+        tags: ["Auth"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["email", "password"],
+                properties: {
+                  email: { type: "string", example: "admin@igen-erp.com" },
+                  password: { type: "string", example: "AdminPass123" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Đăng nhập thành công, Refresh Token trả về qua cookie httpOnly" },
+          400: { description: "Email hoặc mật khẩu sai" },
+        },
+      },
+    },
+    "/auth/refresh-token": {
+      post: {
+        summary: "Lấy Access Token mới bằng Refresh Token lưu tại cookie",
+        tags: ["Auth"],
+        responses: {
+          200: { description: "Cấp mới Access Token thành công" },
+          401: { description: "Refresh Token đã hết hạn hoặc không hợp lệ" },
+        },
+      },
+    },
+    "/auth/logout": {
+      post: {
+        summary: "Đăng xuất khỏi hệ thống",
+        tags: ["Auth"],
+        responses: {
+          200: { description: "Đăng xuất thành công" },
+        },
+      },
+    },
+    "/auth/me": {
+      get: {
+        summary: "Lấy thông tin tài khoản hiện tại",
+        tags: ["Auth"],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "Lấy thông tin thành công" },
+          401: { description: "Chưa đăng nhập" },
+        },
+      },
+    },
+    "/pricing": {
+      get: {
+        summary: "Lấy danh sách cấu hình giá học viên (Phân trang & Tìm kiếm)",
+        tags: ["Pricing"],
+        parameters: [
+          { name: "page", in: "query", schema: { type: "integer" } },
+          { name: "limit", in: "query", schema: { type: "integer" } },
+          { name: "search", in: "query", schema: { type: "string" }, description: "Tìm kiếm theo khoảng số học viên" },
+        ],
+        responses: {
+          200: { description: "Lấy danh sách thành công" },
+        },
+      },
+      post: {
+        summary: "Tạo cấu hình giá mới (Admin)",
+        tags: ["Pricing"],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Pricing" },
+            },
+          },
+        },
+        responses: {
+          201: { description: "Tạo thành công" },
+          401: { description: "Chưa đăng nhập" },
+        },
+      },
+    },
+    "/pricing/{id}": {
+      get: {
+        summary: "Lấy chi tiết cấu hình giá",
+        tags: ["Pricing"],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Thành công" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      patch: {
+        summary: "Cập nhật cấu hình giá (Admin)",
+        tags: ["Pricing"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { type: "object" },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Cập nhật thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      delete: {
+        summary: "Xóa cấu hình giá (Admin)",
+        tags: ["Pricing"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Xóa thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+    },
+    "/features": {
+      get: {
+        summary: "Lấy danh sách tính năng so sánh (Phân trang & Tìm kiếm)",
+        tags: ["Features"],
+        parameters: [
+          { name: "page", in: "query", schema: { type: "integer" } },
+          { name: "limit", in: "query", schema: { type: "integer" } },
+          { name: "search", in: "query", schema: { type: "string" }, description: "Tìm kiếm theo danh mục" },
+        ],
+        responses: {
+          200: { description: "Lấy danh sách thành công" },
+        },
+      },
+      post: {
+        summary: "Tạo so sánh tính năng mới (Admin)",
+        tags: ["Features"],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Feature" },
+            },
+          },
+        },
+        responses: {
+          201: { description: "Tạo thành công" },
+          401: { description: "Chưa đăng nhập" },
+        },
+      },
+    },
+    "/features/{id}": {
+      get: {
+        summary: "Lấy chi tiết tính năng so sánh",
+        tags: ["Features"],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Thành công" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      patch: {
+        summary: "Cập nhật tính năng so sánh (Admin)",
+        tags: ["Features"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { type: "object" },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Cập nhật thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      delete: {
+        summary: "Xóa tính năng so sánh (Admin)",
+        tags: ["Features"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Xóa thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+    },
+    "/services": {
+      get: {
+        summary: "Lấy danh sách dịch vụ chăm sóc khách hàng (Phân trang & Tìm kiếm)",
+        tags: ["Services"],
+        parameters: [
+          { name: "page", in: "query", schema: { type: "integer" } },
+          { name: "limit", in: "query", schema: { type: "integer" } },
+          { name: "search", in: "query", schema: { type: "string" }, description: "Tìm kiếm theo tên dịch vụ" },
+        ],
+        responses: {
+          200: { description: "Lấy danh sách thành công" },
+        },
+      },
+      post: {
+        summary: "Tạo dịch vụ mới (Admin)",
+        tags: ["Services"],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Service" },
+            },
+          },
+        },
+        responses: {
+          201: { description: "Tạo thành công" },
+          401: { description: "Chưa đăng nhập" },
+        },
+      },
+    },
+    "/services/{id}": {
+      get: {
+        summary: "Lấy chi tiết dịch vụ chăm sóc khách hàng",
+        tags: ["Services"],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Thành công" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      patch: {
+        summary: "Cập nhật dịch vụ (Admin)",
+        tags: ["Services"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { type: "object" },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Cập nhật thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      delete: {
+        summary: "Xóa dịch vụ (Admin)",
+        tags: ["Services"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Xóa thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+    },
+    "/health": {
+      get: {
+        summary: "Health Check cho Server & DB",
+        tags: ["Health Check"],
+        responses: {
+          200: { description: "Hệ thống hoạt động bình thường, DB kết nối tốt" },
+          500: { description: "Mất kết nối Cơ sở dữ liệu" },
+        },
+      },
+    },
+  },
+};
+
+const options = {
+  swaggerDefinition,
+  apis: [],
+};
+
+export const swaggerSpec = swaggerJSDoc(options);
