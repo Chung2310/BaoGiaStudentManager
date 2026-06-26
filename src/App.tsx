@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IgenErpLogo, IgenTechLogo, IgenHrmLogo, IgenCrmLogo, IgenFinLogo, IgenWmsLogo } from "./components/Logo";
+import { IgenErpLogo, IgenTechLogo } from "./components/Logo";
 import { PricingTable } from "./components/PricingTable";
 import { FeatureTable } from "./components/FeatureTable";
 import { ServiceTable } from "./components/ServiceTable";
@@ -35,17 +35,6 @@ const PrintFooter: React.FC = () => (
             <strong>📝 MST/GPKD:</strong> 2301355232 (Cấp bởi Sở KH&ĐT Tỉnh Bắc Ninh)
           </div>
         </div>
-      </div>
-      <div className="footer-right">
-        <IgenErpLogo />
-        <div style={{ height: "20px", width: "1px", backgroundColor: "#ccc" }}></div>
-        <IgenHrmLogo />
-        <div style={{ height: "20px", width: "1px", backgroundColor: "#ccc" }}></div>
-        <IgenCrmLogo />
-        <div style={{ height: "20px", width: "1px", backgroundColor: "#ccc" }}></div>
-        <IgenFinLogo />
-        <div style={{ height: "20px", width: "1px", backgroundColor: "#ccc" }}></div>
-        <IgenWmsLogo />
       </div>
     </div>
     <div className="footer-divider"></div>
@@ -231,17 +220,6 @@ export const App: React.FC = () => {
                   <strong>📝 MST/GPKD:</strong> 2301355232 (Cấp bởi Sở KH&ĐT Tỉnh Bắc Ninh)
                 </div>
               </div>
-            </div>
-            <div className="footer-right">
-              <IgenErpLogo />
-              <div style={{ height: "20px", width: "1px", backgroundColor: "#ccc" }}></div>
-              <IgenHrmLogo />
-              <div style={{ height: "20px", width: "1px", backgroundColor: "#ccc" }}></div>
-              <IgenCrmLogo />
-              <div style={{ height: "20px", width: "1px", backgroundColor: "#ccc" }}></div>
-              <IgenFinLogo />
-              <div style={{ height: "20px", width: "1px", backgroundColor: "#ccc" }}></div>
-              <IgenWmsLogo />
             </div>
           </div>
           <div className="footer-divider"></div>
