@@ -16,8 +16,9 @@ export class PackageController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 100;
       const search = req.query.search as string;
+      const projectId = req.query.projectId as string;
 
-      const result = await PackageService.getList({ page, limit, search });
+      const result = await PackageService.getList({ page, limit, search, projectId });
       res.json({ success: true, ...result });
     } catch (error) {
       next(error);
@@ -26,7 +27,8 @@ export class PackageController {
 
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await PackageService.getAll();
+      const projectId = req.query.projectId as string;
+      const data = await PackageService.getAll(projectId);
       res.json({ success: true, data });
     } catch (error) {
       next(error);

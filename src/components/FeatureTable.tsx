@@ -16,7 +16,7 @@ interface FeatureItem {
   order: number;
 }
 
-export const FeatureTable: React.FC = () => {
+export const FeatureTable: React.FC<{ projectId?: string }> = ({ projectId }) => {
   const [items, setItems] = useState<FeatureItem[]>([]);
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,8 +26,8 @@ export const FeatureTable: React.FC = () => {
     try {
       setLoading(true);
       const [featureData, packageData] = await Promise.all([
-        api.getFeatures(),
-        api.getAllPackages(),
+        api.getFeatures(undefined, projectId),
+        api.getAllPackages(projectId),
       ]);
       setItems(featureData);
       setPackages(packageData);
@@ -40,7 +40,7 @@ export const FeatureTable: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [projectId]);
 
   if (loading) return <div className="loading-state">Đang tải bảng tính năng...</div>;
   if (error) return <div className="error-state">{error}</div>;

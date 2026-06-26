@@ -92,6 +92,15 @@ const swaggerDefinition = {
           order: { type: "number", example: 1 },
         },
       },
+      Setting: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          key: { type: "string", example: "phone" },
+          value: { type: "string", example: "0968 688 888" },
+          description: { type: "string", example: "Số điện thoại hiển thị ở Footer" },
+        },
+      },
     },
   },
   paths: {
@@ -480,6 +489,90 @@ const swaggerDefinition = {
         responses: {
           200: { description: "Hệ thống hoạt động bình thường, DB kết nối tốt" },
           500: { description: "Mất kết nối Cơ sở dữ liệu" },
+        },
+      },
+    },
+    "/settings": {
+      get: {
+        summary: "Lấy danh sách cấu hình hệ thống (Phân trang & Tìm kiếm)",
+        tags: ["Settings"],
+        parameters: [
+          { name: "page", in: "query", schema: { type: "integer" } },
+          { name: "limit", in: "query", schema: { type: "integer" } },
+          { name: "search", in: "query", schema: { type: "string" }, description: "Tìm kiếm theo key hoặc mô tả" },
+        ],
+        responses: {
+          200: { description: "Lấy danh sách thành công" },
+        },
+      },
+      post: {
+        summary: "Tạo cấu hình mới (Admin)",
+        tags: ["Settings"],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Setting" },
+            },
+          },
+        },
+        responses: {
+          201: { description: "Tạo thành công" },
+          400: { description: "Khóa cấu hình đã tồn tại hoặc dữ liệu không hợp lệ" },
+          401: { description: "Chưa đăng nhập" },
+        },
+      },
+    },
+    "/settings/key/{key}": {
+      get: {
+        summary: "Lấy cấu hình chi tiết theo khóa (key)",
+        tags: ["Settings"],
+        parameters: [{ name: "key", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Thành công" },
+          404: { description: "Không tìm thấy cấu hình với khóa này" },
+        },
+      },
+    },
+    "/settings/{id}": {
+      get: {
+        summary: "Lấy cấu hình chi tiết theo ID",
+        tags: ["Settings"],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Thành công" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      patch: {
+        summary: "Cập nhật cấu hình (Admin)",
+        tags: ["Settings"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { type: "object" },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Cập nhật thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      delete: {
+        summary: "Xóa cấu hình (Admin)",
+        tags: ["Settings"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Xóa thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
         },
       },
     },

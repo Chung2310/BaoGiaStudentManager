@@ -16,7 +16,7 @@ interface ServiceItem {
   order: number;
 }
 
-export const ServiceTable: React.FC = () => {
+export const ServiceTable: React.FC<{ projectId?: string }> = ({ projectId }) => {
   const [items, setItems] = useState<ServiceItem[]>([]);
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,8 +26,8 @@ export const ServiceTable: React.FC = () => {
     try {
       setLoading(true);
       const [serviceData, packageData] = await Promise.all([
-        api.getServices(),
-        api.getAllPackages(),
+        api.getServices(undefined, projectId),
+        api.getAllPackages(projectId),
       ]);
       setItems(serviceData);
       setPackages(packageData);
@@ -40,7 +40,7 @@ export const ServiceTable: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [projectId]);
 
   if (loading) return <div className="loading-state">Đang tải bảng dịch vụ...</div>;
   if (error) return <div className="error-state">{error}</div>;

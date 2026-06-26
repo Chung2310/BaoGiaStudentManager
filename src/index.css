@@ -476,6 +476,231 @@ body {
   }
 }
 
+/* ── Settings Panel ── */
+.settings-panel {
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+  padding: 28px 32px;
+  max-width: 900px;
+}
+
+.settings-panel h3 {
+  font-family: var(--font-title);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 6px;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+  margin-bottom: 24px;
+}
+
+.settings-full-row {
+  grid-column: 1 / -1;
+}
+
+.settings-preview {
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  background: var(--bg-color);
+}
+
+.settings-preview-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.settings-preview-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-preview-box .address-item {
+  font-size: 13px;
+  color: var(--text-dark);
+  line-height: 1.5;
+}
+
+/* ── Project Panel ── */
+.project-panel {
+  background: var(--bg-color);
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.project-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.project-panel-title {
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--primary-color);
+}
+
+.project-create-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.project-create-form .form-input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  cursor: pointer;
+  transition: var(--transition);
+  background: #fff;
+}
+
+.project-item:hover {
+  border-color: var(--primary-color);
+  background: rgba(29, 95, 163, 0.03);
+}
+
+.project-item.active {
+  border-color: var(--primary-color);
+  background: rgba(29, 95, 163, 0.06);
+}
+
+.project-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.project-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-color);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.project-item.active .project-dot {
+  background: var(--primary-color);
+}
+
+.project-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-item.active .project-name {
+  color: var(--primary-color);
+}
+
+.project-rename-input {
+  margin-bottom: 0 !important;
+  padding: 4px 8px !important;
+  font-size: 13px !important;
+}
+
+.project-item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-xs {
+  font-size: 11px !important;
+  padding: 3px 8px !important;
+  border-radius: 5px !important;
+}
+
+.btn-sm {
+  font-size: 12px !important;
+  padding: 5px 12px !important;
+}
+
+.btn-clone {
+  background: var(--bg-color);
+  color: #1d5fa3;
+  border: 1.5px solid #1d5fa3;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-clone:hover {
+  background: #1d5fa3;
+  color: #fff;
+}
+
+.project-selected-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(29, 95, 163, 0.06);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-color);
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--text-dark);
+  flex-wrap: wrap;
+}
+
+.project-preview-link {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.project-preview-link code {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  word-break: break-all;
+}
+
 /* Admin Dashboard CSS */
 .admin-dashboard {
   background-color: var(--card-bg);
@@ -921,6 +1146,41 @@ body {
   padding-bottom: 8px;
 }
 
+.print-float-scopes {
+  display: flex;
+  gap: 8px;
+}
+
+.float-btn-scope {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-color);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  padding: 8px 6px;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.float-btn-scope:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: rgba(29, 95, 163, 0.05);
+}
+
+.float-btn-scope.active {
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(29, 95, 163, 0.3);
+}
+
 .print-float-orientations {
   display: flex;
   gap: 8px;
@@ -1095,6 +1355,27 @@ body {
     break-after: avoid !important;
     page-break-after: avoid !important;
     overflow: visible !important;
+  }
+
+  /* Khi xuất tất cả trang: hiện cả 3 trang, mỗi trang trên 1 tờ */
+  body.print-all-mode .print-page {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+    padding: 10px 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+
+  body.print-all-mode .print-page:last-child {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
   .print-only-header {

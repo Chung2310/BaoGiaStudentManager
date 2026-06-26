@@ -11,6 +11,7 @@ export const idParamSchema = Joi.object({
 });
 
 export const createFeatureSchema = Joi.object({
+  projectId: Joi.string().pattern(objectIdPattern).optional(),
   category: Joi.string().required().messages({
     "any.required": "Danh mục tính năng là bắt buộc.",
     "string.empty": "Danh mục tính năng không được để trống.",
@@ -35,4 +36,5 @@ export const queryFeatureSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1).optional(),
   limit: Joi.number().integer().min(1).default(100).optional(),
   search: Joi.string().allow("").optional(),
+  projectId: Joi.string().pattern(objectIdPattern).optional(),
 });

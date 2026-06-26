@@ -11,6 +11,7 @@ export const idParamSchema = Joi.object({
 });
 
 export const createPricingSchema = Joi.object({
+  projectId: Joi.string().pattern(objectIdPattern).optional(),
   studentRange: Joi.string().required().messages({
     "any.required": "Khoảng số lượng/quy mô là bắt buộc.",
     "string.empty": "Khoảng số lượng/quy mô không được để trống.",
@@ -35,4 +36,5 @@ export const queryPricingSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1).optional(),
   limit: Joi.number().integer().min(1).default(100).optional(),
   search: Joi.string().allow("").optional(),
+  projectId: Joi.string().pattern(objectIdPattern).optional(),
 });

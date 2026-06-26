@@ -3,10 +3,14 @@ import { IPackage } from "../interfaces/package.interface";
 
 const packageSchema = new Schema<IPackage>(
   {
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
+      index: true,
+    },
     key: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
       index: true,
     },

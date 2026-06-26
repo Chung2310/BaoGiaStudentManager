@@ -3,6 +3,11 @@ import { IService } from "../interfaces/service.interface";
 
 const serviceSchema = new Schema<IService>(
   {
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
+      index: true,
+    },
     serviceName: {
       type: String,
       required: true,

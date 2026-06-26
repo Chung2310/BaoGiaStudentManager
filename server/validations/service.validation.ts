@@ -11,6 +11,7 @@ export const idParamSchema = Joi.object({
 });
 
 export const createServiceSchema = Joi.object({
+  projectId: Joi.string().pattern(objectIdPattern).optional(),
   serviceName: Joi.string().required().messages({
     "any.required": "Tên dịch vụ là bắt buộc.",
     "string.empty": "Tên dịch vụ không được để trống.",
@@ -35,4 +36,5 @@ export const queryServiceSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1).optional(),
   limit: Joi.number().integer().min(1).default(100).optional(),
   search: Joi.string().allow("").optional(),
+  projectId: Joi.string().pattern(objectIdPattern).optional(),
 });

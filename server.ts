@@ -18,6 +18,8 @@ import { PricingService } from "./server/services/pricing.service";
 import { FeatureService } from "./server/services/feature.service";
 import { ServiceService } from "./server/services/service.service";
 import { PackageService } from "./server/services/package.service";
+import { SettingService } from "./server/services/setting.service";
+import { ProjectService } from "./server/services/project.service";
 
 dotenv.config();
 
@@ -25,12 +27,14 @@ async function startServer() {
   // Connect to Database
   await connectDB();
 
-  // Seed Default System Data (Admin user, pricing values, features, services)
+  // Seed Default System Data (Admin user, projects, pricing values, features, services, settings)
   await AuthService.seedAdmin();
-  await PackageService.seedDefaultData();
-  await PricingService.seedDefaultData();
-  await FeatureService.seedDefaultData();
-  await ServiceService.seedDefaultData();
+  const defaultProject = await ProjectService.seedDefaultProject();
+  await PackageService.seedDefaultData(defaultProject._id);
+  await PricingService.seedDefaultData(defaultProject._id);
+  await FeatureService.seedDefaultData(defaultProject._id);
+  await ServiceService.seedDefaultData(defaultProject._id);
+  await SettingService.seedDefaultData();
 
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3004;

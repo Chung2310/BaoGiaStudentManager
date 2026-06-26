@@ -16,8 +16,9 @@ export class ServiceController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 100;
       const search = req.query.search as string;
+      const projectId = req.query.projectId as string;
 
-      const result = await ServiceService.getList({ page, limit, search });
+      const result = await ServiceService.getList({ page, limit, search, projectId });
       res.json({ success: true, ...result });
     } catch (error) {
       next(error);

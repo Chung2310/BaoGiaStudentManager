@@ -3,6 +3,11 @@ import { IFeature } from "../interfaces/feature.interface";
 
 const featureSchema = new Schema<IFeature>(
   {
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
+      index: true,
+    },
     category: {
       type: String,
       required: true,

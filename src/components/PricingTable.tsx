@@ -21,7 +21,7 @@ interface PackageGroup {
   count: number;
 }
 
-export const PricingTable: React.FC = () => {
+export const PricingTable: React.FC<{ projectId?: string; applyDate?: string }> = ({ projectId, applyDate }) => {
   const [items, setItems] = useState<PricingItem[]>([]);
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +31,8 @@ export const PricingTable: React.FC = () => {
     try {
       setLoading(true);
       const [pricingData, packageData] = await Promise.all([
-        api.getPricing(),
-        api.getAllPackages(),
+        api.getPricing(undefined, projectId),
+        api.getAllPackages(projectId),
       ]);
       setItems(pricingData);
       setPackages(packageData);
@@ -45,7 +45,7 @@ export const PricingTable: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [projectId]);
 
   const formatPrice = (val: number) => {
     return val.toString().padStart(2, "0");
@@ -119,7 +119,7 @@ export const PricingTable: React.FC = () => {
     <div className="table-container fade-in">
       <div className="pdf-page-header">
         <h1 className="page-title">CHÍNH SÁCH GIÁ iGEN ERP</h1>
-        <p className="page-subtitle">(Áp dụng từ 01/08/2025)</p>
+        {applyDate && <p className="page-subtitle">(Áp dụng từ {applyDate})</p>}
       </div>
 
       <div className="pricing-table-wrapper">

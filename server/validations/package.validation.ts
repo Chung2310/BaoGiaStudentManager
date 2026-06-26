@@ -12,6 +12,7 @@ export const idParamSchema = Joi.object({
 });
 
 export const createPackageSchema = Joi.object({
+  projectId: Joi.string().pattern(objectIdPattern).optional(),
   key: Joi.string().pattern(keyPattern).required().messages({
     "any.required": "Mã khóa gói cước là bắt buộc.",
     "string.empty": "Mã khóa gói cước không được để trống.",
@@ -44,5 +45,6 @@ export const queryPackageSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1).optional(),
   limit: Joi.number().integer().min(1).default(100).optional(),
   search: Joi.string().allow("").optional(),
+  projectId: Joi.string().pattern(objectIdPattern).optional(),
 });
 

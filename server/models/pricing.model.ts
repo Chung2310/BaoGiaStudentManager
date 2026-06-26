@@ -3,6 +3,11 @@ import { IPricing } from "../interfaces/pricing.interface";
 
 const pricingSchema = new Schema<IPricing>(
   {
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
+      index: true,
+    },
     studentRange: {
       type: String,
       required: true,
