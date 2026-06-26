@@ -33,7 +33,7 @@ async function startServer() {
   await ServiceService.seedDefaultData();
 
   const app = express();
-  const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3005;
+  const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3004;
 
   // Configure CORS securely using LINK_COR environment variable
   const allowedOrigins = process.env.LINK_COR
@@ -41,7 +41,7 @@ async function startServer() {
         .map(o => o.trim())
         .filter(Boolean)
         .map(o => o.replace(/\/$/, ""))
-    : ["http://localhost:3005"];
+    : ["http://localhost:3004"];
     
   // Proactively whitelist local address for development & Swagger API Docs
   const localOrigin = `http://localhost:${PORT}`;

@@ -27,7 +27,7 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3005
+ENV PORT=3004
 
 # Copy compiled resources and package configuration
 COPY --from=builder /app/dist ./dist
@@ -38,7 +38,7 @@ RUN --mount=type=cache,target=/root/.yarn-cache \
     yarn install --production --frozen-lockfile --cache-folder /root/.yarn-cache
 
 # Expose production port
-EXPOSE 3005
+EXPOSE 3004
 
 # Run the ES module server
 CMD ["node", "dist/server.js"]

@@ -6,7 +6,7 @@ services:
     container_name: ${CONTAINER_NAME:-baogia-erp}
     restart: always
     ports:
-      - "3005:3005"
+      - "3004:3004"
     env_file:
       - .env
     volumes:
