@@ -187,7 +187,7 @@ export const ELearnLogo: React.FC<{ className?: string }> = ({ className }) => (
 
 export const IgenTechLogo: React.FC<{ className?: string }> = ({ className }) => (
   <svg
-    viewBox="0 0 200 60"
+    viewBox="0 0 300 60"
     className={className}
     style={{ height: "40px", width: "auto" }}
     xmlns="http://www.w3.org/2000/svg"

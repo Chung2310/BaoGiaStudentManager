@@ -427,9 +427,15 @@ body {
 
 .address-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.address-item strong {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .footer-right {
