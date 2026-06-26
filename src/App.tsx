@@ -32,10 +32,6 @@ const PrintHeader: React.FC = () => (
     <div className="logo-group">
       <IgenErpLogo style={{ height: "35px" }} />
     </div>
-    <div className="header-meta">
-      <div className="header-meta-title">HỆ THỐNG QUẢN TRỊ DOANH NGHIỆP TOÀN DIỆN</div>
-      <div className="header-meta-subtitle">(ALL IN ONE) DÀNH CHO DOANH NGHIỆP & TRƯỜNG HỌC</div>
-    </div>
   </div>
 );
 
@@ -292,7 +288,7 @@ export const App: React.FC = () => {
               </div>
             )}
             {/* Page 1: Pricing */}
-            <div className={`print-page ${activeTab === "pricing" ? "screen-active" : "screen-hidden"}`}>
+            <div className={`print-page print-page-first ${activeTab === "pricing" ? "screen-active" : "screen-hidden"}`}>
               <PrintHeader />
               <PricingTable projectId={activeProjectId} applyDate={footerInfo.apply_date} />
               <PrintFooter info={footerInfo} />
@@ -306,7 +302,7 @@ export const App: React.FC = () => {
             </div>
 
             {/* Page 3: Services */}
-            <div className={`print-page ${activeTab === "services" ? "screen-active" : "screen-hidden"}`}>
+            <div className={`print-page print-page-last ${activeTab === "services" ? "screen-active" : "screen-hidden"}`}>
               <PrintHeader />
               <ServiceTable projectId={activeProjectId} />
               <PrintFooter info={footerInfo} />

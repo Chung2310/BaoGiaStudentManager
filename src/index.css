@@ -1378,6 +1378,15 @@ body {
     page-break-after: avoid !important;
   }
 
+  /* Chỉ trang đầu có header, chỉ trang cuối có footer khi xuất tất cả */
+  body.print-all-mode .print-page:not(.print-page-first) .print-only-header {
+    display: none !important;
+  }
+
+  body.print-all-mode .print-page:not(.print-page-last) .print-only-footer {
+    display: none !important;
+  }
+
   .print-only-header {
     display: flex !important;
     justify-content: space-between;
