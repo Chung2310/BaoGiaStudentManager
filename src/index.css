@@ -836,12 +836,14 @@ body {
   display: block;
 }
 
-.print-page.screen-hidden {
-  display: none;
-}
+@media screen {
+  .print-page.screen-hidden {
+    display: none !important;
+  }
 
-.print-page.screen-active {
-  display: block;
+  .print-page.screen-active {
+    display: block !important;
+  }
 }
 
 @media print {
@@ -850,10 +852,19 @@ body {
     margin: 8mm 12mm;
   }
 
-  body {
+  html, body {
     background-color: #FFFFFF !important;
     color: #000000 !important;
     font-size: 12px !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .app-container {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
 
   .main-header,
@@ -868,10 +879,13 @@ body {
   }
 
   .content-wrapper {
+    display: block !important;
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .table-container {
@@ -895,10 +909,6 @@ body {
 
   .print-page:last-of-type {
     page-break-after: avoid !important;
-  }
-
-  .print-page.screen-hidden {
-    display: flex !important;
   }
 
   .print-only-header {
