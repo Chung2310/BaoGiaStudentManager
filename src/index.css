@@ -407,8 +407,9 @@ body {
 
 .footer-top-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 40px;
   margin-bottom: 20px;
 }
 
@@ -448,6 +449,17 @@ body {
   text-align: center;
   font-size: 11px;
   color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .footer-left {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  .address-item {
+    justify-content: center;
+  }
 }
 
 /* Admin Dashboard CSS */
@@ -960,8 +972,9 @@ body {
 
   .print-only-footer .footer-top-row {
     display: flex !important;
-    justify-content: space-between;
+    justify-content: center !important;
     align-items: center;
+    gap: 30px;
     margin-bottom: 8px;
   }
 
