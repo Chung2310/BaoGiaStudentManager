@@ -878,6 +878,117 @@ body {
   font-weight: 700;
 }
 
+/* ============================================
+   Floating Print Panel (góc phải màn hình)
+   ============================================ */
+.print-float-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 32px;
+  z-index: 1000;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(29, 95, 163, 0.18), 0 2px 8px rgba(0,0,0,0.10);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 140px;
+  border: 1.5px solid rgba(29, 95, 163, 0.12);
+  transition: box-shadow 0.2s;
+}
+
+.print-float-panel:hover {
+  box-shadow: 0 12px 40px rgba(29, 95, 163, 0.22), 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.print-float-label {
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.print-float-orientations {
+  display: flex;
+  gap: 8px;
+}
+
+.float-btn-orient {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-color);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 6px 8px;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.float-btn-orient:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: rgba(29, 95, 163, 0.05);
+}
+
+.float-btn-orient.active {
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(29, 95, 163, 0.3);
+}
+
+.orient-icon {
+  display: block;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  background: transparent;
+}
+
+.orient-landscape {
+  width: 28px;
+  height: 20px;
+}
+
+.orient-portrait {
+  width: 20px;
+  height: 28px;
+}
+
+.float-btn-print {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: var(--primary-color);
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(29, 95, 163, 0.3);
+}
+
+.float-btn-print:hover {
+  background: #1a4f8c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(29, 95, 163, 0.4);
+}
 
 /* Media Print Customizations */
 .print-only-header,
@@ -934,7 +1045,8 @@ body {
   .admin-dashboard,
   .modal-overlay,
   .main-footer,
-  .print-controls {
+  .print-controls,
+  .print-float-panel {
     display: none !important;
   }
 

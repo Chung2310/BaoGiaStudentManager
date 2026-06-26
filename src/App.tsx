@@ -155,27 +155,9 @@ export const App: React.FC = () => {
 
           <div className="nav-actions">
             {!isAdminMode && (
-              <div className="print-controls">
-                <button
-                  id="btn-orientation-toggle"
-                  className={`btn-orientation ${printOrientation === "landscape" ? "active" : ""}`}
-                  onClick={() => setPrintOrientation("landscape")}
-                  title="In ngang (Landscape)"
-                >
-                  ⬛ Ngang
-                </button>
-                <button
-                  id="btn-orientation-portrait"
-                  className={`btn-orientation ${printOrientation === "portrait" ? "active" : ""}`}
-                  onClick={() => setPrintOrientation("portrait")}
-                  title="In dọc (Portrait)"
-                >
-                  📄 Dọc
-                </button>
-                <button className="btn-print" onClick={handlePrint}>
-                  <FileDown size={16} /> Xuất PDF
-                </button>
-              </div>
+              <button className="btn-print" id="btn-print-nav" onClick={handlePrint}>
+                <FileDown size={16} /> Xuất PDF
+              </button>
             )}
             {isAdminMode ? (
               <button className="btn-admin" onClick={() => setIsAdminMode(false)}>
@@ -210,7 +192,37 @@ export const App: React.FC = () => {
         {isAdminMode && currentUser ? (
           <AdminDashboard />
         ) : (
-          <>
+        <>
+            {/* Floating Print Panel - chỉ hiện trên màn hình */}
+            {!isAdminMode && (
+              <div className="print-float-panel" id="print-float-panel">
+                <div className="print-float-label">Hướng in</div>
+                <div className="print-float-orientations">
+                  <button
+                    id="float-btn-landscape"
+                    className={`float-btn-orient ${printOrientation === "landscape" ? "active" : ""}`}
+                    onClick={() => setPrintOrientation("landscape")}
+                    title="Khổ ngang A4"
+                  >
+                    <span className="orient-icon orient-landscape" />
+                    Ngang
+                  </button>
+                  <button
+                    id="float-btn-portrait"
+                    className={`float-btn-orient ${printOrientation === "portrait" ? "active" : ""}`}
+                    onClick={() => setPrintOrientation("portrait")}
+                    title="Khổ dọc A4"
+                  >
+                    <span className="orient-icon orient-portrait" />
+                    Dọc
+                  </button>
+                </div>
+                <button className="float-btn-print" onClick={handlePrint}>
+                  <FileDown size={15} />
+                  Xuất PDF
+                </button>
+              </div>
+            )}
             {/* Page 1: Pricing */}
             <div className={`print-page ${activeTab === "pricing" ? "screen-active" : "screen-hidden"}`}>
               <PrintHeader />
