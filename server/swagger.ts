@@ -59,15 +59,16 @@ const swaggerDefinition = {
         properties: {
           id: { type: "string" },
           category: { type: "string", example: "Đào tạo" },
-          basicContent: {
-            type: "array",
-            items: { type: "string" },
-            example: ["Quản lý chương trình học...", "App giáo viên"],
-          },
-          plusContent: {
-            type: "array",
-            items: { type: "string" },
-            example: ["Full tính năng", "App giáo viên"],
+          contents: {
+            type: "object",
+            additionalProperties: {
+              type: "array",
+              items: { type: "string" },
+            },
+            example: {
+              Basic: ["Quản lý chương trình học...", "App giáo viên"],
+              Plus: ["Full tính năng", "App giáo viên"],
+            },
           },
           order: { type: "number", example: 1 },
         },
@@ -77,15 +78,16 @@ const swaggerDefinition = {
         properties: {
           id: { type: "string" },
           serviceName: { type: "string", example: "Số lần đào tạo tại trung tâm" },
-          basicContent: {
-            type: "array",
-            items: { type: "string" },
-            example: ["Hỗ trợ đào tạo trực tiếp 01 lần/năm"],
-          },
-          plusContent: {
-            type: "array",
-            items: { type: "string" },
-            example: ["Hỗ trợ đào tạo trực tiếp 02 lần"],
+          contents: {
+            type: "object",
+            additionalProperties: {
+              type: "array",
+              items: { type: "string" },
+            },
+            example: {
+              Basic: ["Hỗ trợ đào tạo trực tiếp 01 lần/năm"],
+              Plus: ["Hỗ trợ đào tạo trực tiếp 02 lần"],
+            },
           },
           order: { type: "number", example: 1 },
         },

@@ -58,51 +58,59 @@ export class ServiceService {
         const defaultServices = [
           {
             serviceName: "Số lần đào tạo tại doanh nghiệp/đơn vị",
-            basicContent: [
-              "Hỗ trợ đào tạo trực tiếp 01 lần/năm (doanh nghiệp/đơn vị ngoài khu vực Hà Nội và Hồ Chí Minh hỗ trợ trực tuyến)",
-              "Đào tạo trực tuyến tối đa 02 lần/năm",
-              "Giải đáp thắc mắc không giới hạn"
-            ],
-            plusContent: [
-              "Hỗ trợ đào tạo trực tiếp 02 lần (doanh nghiệp/đơn vị ngoài khu vực Hà Nội và Hồ Chí Minh hỗ trợ trực tuyến)",
-              "Hỗ trợ trực tiếp thêm 01 lần với quy mô doanh nghiệp từ >500 người dùng/học viên",
-              "Đào tạo trực tuyến không giới hạn, phát sinh khi có nhu cầu",
-              "Hỗ trợ đào tạo khi có nhân viên mới"
-            ],
+            contents: {
+              Basic: [
+                "Hỗ trợ đào tạo trực tiếp 01 lần/năm (doanh nghiệp/đơn vị ngoài khu vực Hà Nội và Hồ Chí Minh hỗ trợ trực tuyến)",
+                "Đào tạo trực tuyến tối đa 02 lần/năm",
+                "Giải đáp thắc mắc không giới hạn"
+              ],
+              Plus: [
+                "Hỗ trợ đào tạo trực tiếp 02 lần (doanh nghiệp/đơn vị ngoài khu vực Hà Nội và Hồ Chí Minh hỗ trợ trực tuyến)",
+                "Hỗ trợ trực tiếp thêm 01 lần với quy mô doanh nghiệp từ >500 người dùng/học viên",
+                "Đào tạo trực tuyến không giới hạn, phát sinh khi có nhu cầu",
+                "Hỗ trợ đào tạo khi có nhân viên mới"
+              ]
+            },
             order: 1
           },
           {
             serviceName: "Nội dung hỗ trợ",
-            basicContent: [
-              "Hỗ trợ đưa dữ liệu/thao tác (Khóa học, lớp học, Học viên, Chương trình học, Hóa đơn, Hợp đồng) lần đầu sử dụng."
-            ],
-            plusContent: [
-              "Hỗ trợ đưa dữ liệu/ thao tác (Khóa học, lớp học, Học viên, Chương trình học, Hóa đơn, Hợp đồng) trong 03 tháng đầu sử dụng"
-            ],
+            contents: {
+              Basic: [
+                "Hỗ trợ đưa dữ liệu/thao tác (Khóa học, lớp học, Học viên, Chương trình học, Hóa đơn, Hợp đồng) lần đầu sử dụng."
+              ],
+              Plus: [
+                "Hỗ trợ đưa dữ liệu/ thao tác (Khóa học, lớp học, Học viên, Chương trình học, Hóa đơn, Hợp đồng) trong 03 tháng đầu sử dụng"
+              ]
+            },
             order: 2
           },
           {
             serviceName: "Thời gian hỗ trợ",
-            basicContent: [
-              "Phản hồi trong khoảng 9h00 - 18h00 từ thứ 2 đến thứ 6",
-              "Thứ 7 và Chủ nhật phản hồi khi có phát sinh",
-              "Không hỗ trợ đào tạo vào thứ 7/chủ nhật"
-            ],
-            plusContent: [
-              "Phản hồi trong khoảng 8h30 - 21h00 từ thứ 2 đến thứ 6",
-              "Thứ 7 và Chủ nhật phản hồi khi có phát sinh",
-              "Nhận lịch đào tạo thứ 7/Chủ nhật nếu có kế hoạch trước"
-            ],
+            contents: {
+              Basic: [
+                "Phản hồi trong khoảng 9h00 - 18h00 từ thứ 2 đến thứ 6",
+                "Thứ 7 và Chủ nhật phản hồi khi có phát sinh",
+                "Không hỗ trợ đào tạo vào thứ 7/chủ nhật"
+              ],
+              Plus: [
+                "Phản hồi trong khoảng 8h30 - 21h00 từ thứ 2 đến thứ 6",
+                "Thứ 7 và Chủ nhật phản hồi khi có phát sinh",
+                "Nhận lịch đào tạo thứ 7/Chủ nhật nếu có kế hoạch trước"
+              ]
+            },
             order: 3
           },
           {
             serviceName: "Số nhân sự hỗ trợ",
-            basicContent: [
-              "01 nhân sự"
-            ],
-            plusContent: [
-              "02 nhân sự"
-            ],
+            contents: {
+              Basic: [
+                "01 nhân sự"
+              ],
+              Plus: [
+                "02 nhân sự"
+              ]
+            },
             order: 4
           }
         ];

@@ -19,16 +19,14 @@ interface PricingItem {
 interface FeatureItem {
   _id: string;
   category: string;
-  basicContent: string[];
-  plusContent: string[];
+  contents: Record<string, string[]>;
   order: number;
 }
 
 interface ServiceItem {
   _id: string;
   serviceName: string;
-  basicContent: string[];
-  plusContent: string[];
+  contents: Record<string, string[]>;
   order: number;
 }
 
@@ -66,18 +64,24 @@ export const AdminDashboard: React.FC = () => {
   });
 
   // Feature Form States
-  const [featureForm, setFeatureForm] = useState({
+  const [featureForm, setFeatureForm] = useState<{
+    category: string;
+    contents: Record<string, string>;
+    order: number;
+  }>({
     category: "",
-    basicContent: "", // will split by newline
-    plusContent: "",  // will split by newline
+    contents: {},
     order: 0,
   });
 
   // Service Form States
-  const [serviceForm, setServiceForm] = useState({
+  const [serviceForm, setServiceForm] = useState<{
+    serviceName: string;
+    contents: Record<string, string>;
+    order: number;
+  }>({
     serviceName: "",
-    basicContent: "", // will split by newline
-    plusContent: "",  // will split by newline
+    contents: {},
     order: 0,
   });
 
@@ -87,7 +91,6 @@ export const AdminDashboard: React.FC = () => {
       setError("");
       setEditingId(null);
       
-      // Always load packages because they are needed to render/edit pricing items
       const packages = await api.getAllPackages();
       setPackageList(packages);
 
@@ -95,7 +98,7 @@ export const AdminDashboard: React.FC = () => {
         const data = await api.getPricing();
         setPricingList(data);
       } else if (activeTab === "packages") {
-        // packageList is already set
+        // packages already loaded
       } else if (activeTab === "features") {
         const data = await api.getFeatures();
         setFeatureList(data);
@@ -115,9 +118,10 @@ export const AdminDashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
-  // Sync pricingForm's prices with all active package keys when packages are loaded
+  // Sync form structures when packages are loaded/updated
   useEffect(() => {
     if (packageList.length > 0) {
+      // 1. Sync Pricing Form
       setPricingForm((prev) => {
         const updatedPrices = { ...prev.prices };
         packageList.forEach((pkg) => {
@@ -128,6 +132,35 @@ export const AdminDashboard: React.FC = () => {
         return {
           ...prev,
           prices: updatedPrices,
+        };
+      });
+
+      // 2. Sync Feature and Service unique groups
+      const uniqueGroups = Array.from(new Set(packageList.map((p) => p.group)));
+      
+      setFeatureForm((prev) => {
+        const updatedContents = { ...prev.contents };
+        uniqueGroups.forEach((g) => {
+          if (updatedContents[g] === undefined) {
+            updatedContents[g] = "";
+          }
+        });
+        return {
+          ...prev,
+          contents: updatedContents,
+        };
+      });
+
+      setServiceForm((prev) => {
+        const updatedContents = { ...prev.contents };
+        uniqueGroups.forEach((g) => {
+          if (updatedContents[g] === undefined) {
+            updatedContents[g] = "";
+          }
+        });
+        return {
+          ...prev,
+          contents: updatedContents,
         };
       });
     }
@@ -255,10 +288,14 @@ export const AdminDashboard: React.FC = () => {
   // Feature CRUD Handlers
   const handleFeatureEdit = (item: FeatureItem) => {
     setEditingId(item._id);
+    const initialContents: Record<string, string> = {};
+    const uniqueGroups = Array.from(new Set(packageList.map((p) => p.group)));
+    uniqueGroups.forEach((g) => {
+      initialContents[g] = item.contents?.[g]?.join("\n") || "";
+    });
     setFeatureForm({
       category: item.category,
-      basicContent: item.basicContent.join("\n"),
-      plusContent: item.plusContent.join("\n"),
+      contents: initialContents,
       order: item.order,
     });
   };
@@ -266,10 +303,13 @@ export const AdminDashboard: React.FC = () => {
   const handleFeatureSave = async (id: string) => {
     try {
       setError("");
+      const contentsPayload: Record<string, string[]> = {};
+      Object.entries(featureForm.contents).forEach(([group, contentStr]) => {
+        contentsPayload[group] = contentStr.split("\n").filter((x) => x.trim() !== "");
+      });
       const payload = {
         category: featureForm.category,
-        basicContent: featureForm.basicContent.split("\n").filter((x) => x.trim() !== ""),
-        plusContent: featureForm.plusContent.split("\n").filter((x) => x.trim() !== ""),
+        contents: contentsPayload,
         order: featureForm.order,
       };
       await api.updateFeature(id, payload);
@@ -285,18 +325,26 @@ export const AdminDashboard: React.FC = () => {
     e.preventDefault();
     try {
       setError("");
+      const contentsPayload: Record<string, string[]> = {};
+      Object.entries(featureForm.contents).forEach(([group, contentStr]) => {
+        contentsPayload[group] = contentStr.split("\n").filter((x) => x.trim() !== "");
+      });
       const payload = {
         category: featureForm.category,
-        basicContent: featureForm.basicContent.split("\n").filter((x) => x.trim() !== ""),
-        plusContent: featureForm.plusContent.split("\n").filter((x) => x.trim() !== ""),
+        contents: contentsPayload,
         order: featureForm.order,
       };
       await api.createFeature(payload);
       showSuccess("Thêm mới danh mục tính năng thành công!");
+      
+      const uniqueGroups = Array.from(new Set(packageList.map((p) => p.group)));
+      const resetContents: Record<string, string> = {};
+      uniqueGroups.forEach((g) => {
+        resetContents[g] = "";
+      });
       setFeatureForm({
         category: "",
-        basicContent: "",
-        plusContent: "",
+        contents: resetContents,
         order: featureList.length + 1,
       });
       loadData();
@@ -320,10 +368,14 @@ export const AdminDashboard: React.FC = () => {
   // Service CRUD Handlers
   const handleServiceEdit = (item: ServiceItem) => {
     setEditingId(item._id);
+    const initialContents: Record<string, string> = {};
+    const uniqueGroups = Array.from(new Set(packageList.map((p) => p.group)));
+    uniqueGroups.forEach((g) => {
+      initialContents[g] = item.contents?.[g]?.join("\n") || "";
+    });
     setServiceForm({
       serviceName: item.serviceName,
-      basicContent: item.basicContent.join("\n"),
-      plusContent: item.plusContent.join("\n"),
+      contents: initialContents,
       order: item.order,
     });
   };
@@ -331,10 +383,13 @@ export const AdminDashboard: React.FC = () => {
   const handleServiceSave = async (id: string) => {
     try {
       setError("");
+      const contentsPayload: Record<string, string[]> = {};
+      Object.entries(serviceForm.contents).forEach(([group, contentStr]) => {
+        contentsPayload[group] = contentStr.split("\n").filter((x) => x.trim() !== "");
+      });
       const payload = {
         serviceName: serviceForm.serviceName,
-        basicContent: serviceForm.basicContent.split("\n").filter((x) => x.trim() !== ""),
-        plusContent: serviceForm.plusContent.split("\n").filter((x) => x.trim() !== ""),
+        contents: contentsPayload,
         order: serviceForm.order,
       };
       await api.updateService(id, payload);
@@ -350,18 +405,26 @@ export const AdminDashboard: React.FC = () => {
     e.preventDefault();
     try {
       setError("");
+      const contentsPayload: Record<string, string[]> = {};
+      Object.entries(serviceForm.contents).forEach(([group, contentStr]) => {
+        contentsPayload[group] = contentStr.split("\n").filter((x) => x.trim() !== "");
+      });
       const payload = {
         serviceName: serviceForm.serviceName,
-        basicContent: serviceForm.basicContent.split("\n").filter((x) => x.trim() !== ""),
-        plusContent: serviceForm.plusContent.split("\n").filter((x) => x.trim() !== ""),
+        contents: contentsPayload,
         order: serviceForm.order,
       };
       await api.createService(payload);
       showSuccess("Thêm mới dịch vụ thành công!");
+      
+      const uniqueGroups = Array.from(new Set(packageList.map((p) => p.group)));
+      const resetContents: Record<string, string> = {};
+      uniqueGroups.forEach((g) => {
+        resetContents[g] = "";
+      });
       setServiceForm({
         serviceName: "",
-        basicContent: "",
-        plusContent: "",
+        contents: resetContents,
         order: serviceList.length + 1,
       });
       loadData();
@@ -381,6 +444,8 @@ export const AdminDashboard: React.FC = () => {
       setError(err.message || "Lỗi xóa");
     }
   };
+
+  const uniqueGroups = Array.from(new Set(packageList.map((p) => p.group)));
 
   return (
     <div className="admin-dashboard fade-in">
@@ -593,9 +658,10 @@ export const AdminDashboard: React.FC = () => {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th style={{ width: "15%" }}>Tính năng</th>
-                      <th style={{ width: "35%" }}>Phiên bản Basic</th>
-                      <th style={{ width: "35%" }}>Phiên bản Plus</th>
+                      <th style={{ width: "20%" }}>Tính năng</th>
+                      {uniqueGroups.map((g) => (
+                        <th key={g} style={{ width: `${Math.floor(65 / uniqueGroups.length)}%` }}>Phiên bản {g}</th>
+                      ))}
                       <th style={{ width: "5%" }}>Thứ tự</th>
                       <th style={{ width: "10%" }}>Thao tác</th>
                     </tr>
@@ -613,24 +679,23 @@ export const AdminDashboard: React.FC = () => {
                                 onChange={(e) => setFeatureForm({ ...featureForm, category: e.target.value })}
                               />
                             </td>
-                            <td>
-                              <textarea
-                                className="form-textarea"
-                                rows={4}
-                                value={featureForm.basicContent}
-                                onChange={(e) => setFeatureForm({ ...featureForm, basicContent: e.target.value })}
-                                placeholder="Mỗi ý viết ở 1 dòng"
-                              />
-                            </td>
-                            <td>
-                              <textarea
-                                className="form-textarea"
-                                rows={4}
-                                value={featureForm.plusContent}
-                                onChange={(e) => setFeatureForm({ ...featureForm, plusContent: e.target.value })}
-                                placeholder="Mỗi ý viết ở 1 dòng"
-                              />
-                            </td>
+                            {uniqueGroups.map((g) => (
+                              <td key={g}>
+                                <textarea
+                                  className="form-textarea"
+                                  rows={4}
+                                  value={featureForm.contents[g] ?? ""}
+                                  onChange={(e) => setFeatureForm({
+                                    ...featureForm,
+                                    contents: {
+                                      ...featureForm.contents,
+                                      [g]: e.target.value
+                                    }
+                                  })}
+                                  placeholder="Mỗi ý viết ở 1 dòng"
+                                />
+                              </td>
+                            ))}
                             <td>
                               <input
                                 type="number"
@@ -647,16 +712,15 @@ export const AdminDashboard: React.FC = () => {
                         ) : (
                           <>
                             <td className="font-bold">{item.category}</td>
-                            <td>
-                              <ul className="bullet-list-small">
-                                {item.basicContent.map((c, i) => <li key={i}>{c}</li>)}
-                              </ul>
-                            </td>
-                            <td>
-                              <ul className="bullet-list-small">
-                                {item.plusContent.map((c, i) => <li key={i}>{c}</li>)}
-                              </ul>
-                            </td>
+                            {uniqueGroups.map((g) => (
+                              <td key={g}>
+                                <ul className="bullet-list-small">
+                                  {item.contents?.[g]?.map((c, i) => <li key={i}>{c}</li>) ?? (
+                                    <span className="no-integration">Không tích hợp</span>
+                                  )}
+                                </ul>
+                              </td>
+                            ))}
                             <td className="text-center">{item.order}</td>
                             <td className="actions-cell">
                               <button className="btn btn-edit" onClick={() => handleFeatureEdit(item)}>Sửa</button>
@@ -677,8 +741,9 @@ export const AdminDashboard: React.FC = () => {
                   <thead>
                     <tr>
                       <th style={{ width: "20%" }}>Dịch vụ</th>
-                      <th style={{ width: "35%" }}>Basic</th>
-                      <th style={{ width: "30%" }}>Plus</th>
+                      {uniqueGroups.map((g) => (
+                        <th key={g} style={{ width: `${Math.floor(65 / uniqueGroups.length)}%` }}>Phiên bản {g}</th>
+                      ))}
                       <th style={{ width: "5%" }}>Thứ tự</th>
                       <th style={{ width: "10%" }}>Thao tác</th>
                     </tr>
@@ -696,24 +761,23 @@ export const AdminDashboard: React.FC = () => {
                                 onChange={(e) => setServiceForm({ ...serviceForm, serviceName: e.target.value })}
                               />
                             </td>
-                            <td>
-                              <textarea
-                                className="form-textarea"
-                                rows={4}
-                                value={serviceForm.basicContent}
-                                onChange={(e) => setServiceForm({ ...serviceForm, basicContent: e.target.value })}
-                                placeholder="Mỗi ý viết ở 1 dòng"
-                              />
-                            </td>
-                            <td>
-                              <textarea
-                                className="form-textarea"
-                                rows={4}
-                                value={serviceForm.plusContent}
-                                onChange={(e) => setServiceForm({ ...serviceForm, plusContent: e.target.value })}
-                                placeholder="Mỗi ý viết ở 1 dòng"
-                              />
-                            </td>
+                            {uniqueGroups.map((g) => (
+                              <td key={g}>
+                                <textarea
+                                  className="form-textarea"
+                                  rows={4}
+                                  value={serviceForm.contents[g] ?? ""}
+                                  onChange={(e) => setServiceForm({
+                                    ...serviceForm,
+                                    contents: {
+                                      ...serviceForm.contents,
+                                      [g]: e.target.value
+                                    }
+                                  })}
+                                  placeholder="Mỗi ý viết ở 1 dòng"
+                                />
+                              </td>
+                            ))}
                             <td>
                               <input
                                 type="number"
@@ -730,16 +794,13 @@ export const AdminDashboard: React.FC = () => {
                         ) : (
                           <>
                             <td className="font-bold">{item.serviceName}</td>
-                            <td>
-                              <ul className="bullet-list-small">
-                                {item.basicContent.map((c, i) => <li key={i}>{c}</li>)}
-                              </ul>
-                            </td>
-                            <td>
-                              <ul className="bullet-list-small">
-                                {item.plusContent.map((c, i) => <li key={i}>{c}</li>)}
-                              </ul>
-                            </td>
+                            {uniqueGroups.map((g) => (
+                              <td key={g}>
+                                <ul className="bullet-list-small">
+                                  {item.contents?.[g]?.map((c, i) => <li key={i}>{c}</li>) ?? "-"}
+                                </ul>
+                              </td>
+                            ))}
                             <td className="text-center">{item.order}</td>
                             <td className="actions-cell">
                               <button className="btn btn-edit" onClick={() => handleServiceEdit(item)}>Sửa</button>
@@ -875,28 +936,25 @@ export const AdminDashboard: React.FC = () => {
                     onChange={(e) => setFeatureForm({ ...featureForm, category: e.target.value })}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Nội dung Basic (Mỗi dòng là 1 ý)</label>
-                  <textarea
-                    className="form-textarea"
-                    rows={4}
-                    placeholder="Nhập các dòng tính năng..."
-                    required
-                    value={featureForm.basicContent}
-                    onChange={(e) => setFeatureForm({ ...featureForm, basicContent: e.target.value })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Nội dung Plus (Mỗi dòng là 1 ý)</label>
-                  <textarea
-                    className="form-textarea"
-                    rows={4}
-                    placeholder="Nhập các dòng tính năng..."
-                    required
-                    value={featureForm.plusContent}
-                    onChange={(e) => setFeatureForm({ ...featureForm, plusContent: e.target.value })}
-                  />
-                </div>
+                {uniqueGroups.map((g) => (
+                  <div className="form-group" key={g}>
+                    <label>Nội dung {g} (Mỗi dòng là 1 ý)</label>
+                    <textarea
+                      className="form-textarea"
+                      rows={4}
+                      placeholder={`Nhập các dòng tính năng cho gói ${g}...`}
+                      required
+                      value={featureForm.contents[g] ?? ""}
+                      onChange={(e) => setFeatureForm({
+                        ...featureForm,
+                        contents: {
+                          ...featureForm.contents,
+                          [g]: e.target.value
+                        }
+                      })}
+                    />
+                  </div>
+                ))}
                 <div className="form-group">
                   <label>Thứ tự sắp xếp (số)</label>
                   <input
@@ -924,28 +982,25 @@ export const AdminDashboard: React.FC = () => {
                     onChange={(e) => setServiceForm({ ...serviceForm, serviceName: e.target.value })}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Nội dung Basic (Mỗi dòng là 1 ý)</label>
-                  <textarea
-                    className="form-textarea"
-                    rows={4}
-                    placeholder="Nhập chi tiết điều kiện..."
-                    required
-                    value={serviceForm.basicContent}
-                    onChange={(e) => setServiceForm({ ...serviceForm, basicContent: e.target.value })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Nội dung Plus (Mỗi dòng là 1 ý)</label>
-                  <textarea
-                    className="form-textarea"
-                    rows={4}
-                    placeholder="Nhập chi tiết điều kiện..."
-                    required
-                    value={serviceForm.plusContent}
-                    onChange={(e) => setServiceForm({ ...serviceForm, plusContent: e.target.value })}
-                  />
-                </div>
+                {uniqueGroups.map((g) => (
+                  <div className="form-group" key={g}>
+                    <label>Nội dung {g} (Mỗi dòng là 1 ý)</label>
+                    <textarea
+                      className="form-textarea"
+                      rows={4}
+                      placeholder={`Nhập chi tiết điều kiện hỗ trợ cho gói ${g}...`}
+                      required
+                      value={serviceForm.contents[g] ?? ""}
+                      onChange={(e) => setServiceForm({
+                        ...serviceForm,
+                        contents: {
+                          ...serviceForm.contents,
+                          [g]: e.target.value
+                        }
+                      })}
+                    />
+                  </div>
+                ))}
                 <div className="form-group">
                   <label>Thứ tự sắp xếp (số)</label>
                   <input

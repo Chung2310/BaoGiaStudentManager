@@ -2,8 +2,7 @@ import { Document } from "mongoose";
 
 export interface IService extends Document {
   serviceName: string;
-  basicContent: string[];
-  plusContent: string[];
+  contents: Map<string, string[]>;
   order: number;
   createdAt?: Date;
   updatedAt?: Date;

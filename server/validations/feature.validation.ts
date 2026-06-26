@@ -15,11 +15,9 @@ export const createFeatureSchema = Joi.object({
     "any.required": "Danh mục tính năng là bắt buộc.",
     "string.empty": "Danh mục tính năng không được để trống.",
   }),
-  basicContent: Joi.array().items(Joi.string().allow("")).required().messages({
-    "any.required": "Nội dung phiên bản Basic là bắt buộc.",
-  }),
-  plusContent: Joi.array().items(Joi.string().allow("")).required().messages({
-    "any.required": "Nội dung phiên bản Plus là bắt buộc.",
+  contents: Joi.object().pattern(Joi.string(), Joi.array().items(Joi.string().allow(""))).required().messages({
+    "any.required": "Nội dung so sánh của các gói là bắt buộc.",
+    "object.base": "Nội dung so sánh phải là một đối tượng.",
   }),
   order: Joi.number().integer().required().messages({
     "any.required": "Thứ tự sắp xếp là bắt buộc.",
@@ -29,8 +27,7 @@ export const createFeatureSchema = Joi.object({
 
 export const updateFeatureSchema = Joi.object({
   category: Joi.string().optional(),
-  basicContent: Joi.array().items(Joi.string().allow("")).optional(),
-  plusContent: Joi.array().items(Joi.string().allow("")).optional(),
+  contents: Joi.object().pattern(Joi.string(), Joi.array().items(Joi.string().allow(""))).optional(),
   order: Joi.number().integer().optional(),
 });
 

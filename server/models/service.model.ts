@@ -9,15 +9,10 @@ const serviceSchema = new Schema<IService>(
       trim: true,
       index: true,
     },
-    basicContent: {
-      type: [String],
-      required: true,
-      default: [],
-    },
-    plusContent: {
-      type: [String],
-      required: true,
-      default: [],
+    contents: {
+      type: Map,
+      of: [String],
+      default: {},
     },
     order: {
       type: Number,

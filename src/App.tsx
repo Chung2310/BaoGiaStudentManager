@@ -59,7 +59,7 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"pricing" | "features" | "services">("pricing");
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  
+
   // Auth Modal States
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
@@ -116,14 +116,6 @@ export const App: React.FC = () => {
         <div className="header-content">
           <div className="logo-group">
             <IgenErpLogo />
-          </div>
-          <div className="header-meta">
-            <div className="header-meta-title">
-              HỆ THỐNG QUẢN TRỊ DOANH NGHIỆP TOÀN DIỆN
-            </div>
-            <div className="header-meta-subtitle">
-              (ALL IN ONE) DÀNH CHO DOANH NGHIỆP & TRƯỜNG HỌC
-            </div>
           </div>
         </div>
       </header>
@@ -270,9 +262,8 @@ export const App: React.FC = () => {
 
             {authError && (
               <div
-                className={`alert-message ${
-                  authError.includes("thành công") ? "success-message" : "error-message"
-                }`}
+                className={`alert-message ${authError.includes("thành công") ? "success-message" : "error-message"
+                  }`}
               >
                 {authError}
               </div>
@@ -323,8 +314,6 @@ export const App: React.FC = () => {
             <div className="modal-footer-toggle">
               {authMode === "login" ? (
                 <>
-                  Chưa có tài khoản?{" "}
-                  <span onClick={() => { setAuthMode("register"); setAuthError(""); }}>Đăng ký ngay</span>
                 </>
               ) : (
                 <>

@@ -58,84 +58,96 @@ export class FeatureService {
         const defaultFeatures = [
           {
             category: "Đào tạo",
-            basicContent: [
-              "Quản lý chương trình học, lớp học, khoá học, thời khoá biểu...",
-              "App giáo viên, phụ huynh"
-            ],
-            plusContent: [
-              "Full tính năng",
-              "App giáo viên, phụ huynh"
-            ],
+            contents: {
+              Basic: [
+                "Quản lý chương trình học, lớp học, khoá học, thời khoá biểu...",
+                "App giáo viên, phụ huynh"
+              ],
+              Plus: [
+                "Full tính năng",
+                "App giáo viên, phụ huynh"
+              ]
+            },
             order: 1
           },
           {
             category: "Tài chính",
-            basicContent: [
-              "Quản lý khoản thu",
-              "Quản lý kho vật phẩm"
-            ],
-            plusContent: [
-              "Quản lý khoản thu",
-              "Quản lý kho vật phẩm"
-            ],
+            contents: {
+              Basic: [
+                "Quản lý khoản thu",
+                "Quản lý kho vật phẩm"
+              ],
+              Plus: [
+                "Quản lý khoản thu",
+                "Quản lý kho vật phẩm"
+              ]
+            },
             order: 2
           },
           {
             category: "CRM",
-            basicContent: [
-              "Quản lý khách hàng tiềm năng",
-              "Quản lý lịch hẹn khách hàng",
-              "Quản lý lịch sử chăm sóc"
-            ],
-            plusContent: [
-              "Quản lý khách hàng tiềm năng",
-              "Quản lý lịch hẹn khách hàng",
-              "Quản lý lịch sử chăm sóc"
-            ],
+            contents: {
+              Basic: [
+                "Quản lý khách hàng tiềm năng",
+                "Quản lý lịch hẹn khách hàng",
+                "Quản lý lịch sử chăm sóc"
+              ],
+              Plus: [
+                "Quản lý khách hàng tiềm năng",
+                "Quản lý lịch hẹn khách hàng",
+                "Quản lý lịch sử chăm sóc"
+              ]
+            },
             order: 3
           },
           {
             category: "Báo cáo",
-            basicContent: [
-              "Báo cáo đào tạo",
-              "Báo cáo tài chính",
-              "Báo cáo CRM",
-              "Không phát triển báo cáo"
-            ],
-            plusContent: [
-              "Báo cáo đào tạo",
-              "Báo cáo tài chính",
-              "Báo cáo CRM",
-              "Mở rộng một số báo cáo theo yêu cầu"
-            ],
+            contents: {
+              Basic: [
+                "Báo cáo đào tạo",
+                "Báo cáo tài chính",
+                "Báo cáo CRM",
+                "Không phát triển báo cáo"
+              ],
+              Plus: [
+                "Báo cáo đào tạo",
+                "Báo cáo tài chính",
+                "Báo cáo CRM",
+                "Mở rộng một số báo cáo theo yêu cầu"
+              ]
+            },
             order: 4
           },
           {
             category: "Tích hợp",
-            basicContent: [
-              "Không tích hợp"
-            ],
-            plusContent: [
-              "Tích hợp",
-              "Call Center",
-              "Thanh toán trực tuyến",
-              "Học trực tuyến",
-              "Elearn",
-              "*Không bao gồm phí dịch vụ trả cho bên thứ ba"
-            ],
+            contents: {
+              Basic: [
+                "Không tích hợp"
+              ],
+              Plus: [
+                "Tích hợp",
+                "Call Center",
+                "Thanh toán trực tuyến",
+                "Học trực tuyến",
+                "Elearn",
+                "*Không bao gồm phí dịch vụ trả cho bên thứ ba"
+              ]
+            },
             order: 5
           },
           {
             category: "Tính năng mới",
-            basicContent: [
-              "Tối ưu tất cả các tính năng hiện có của hệ thống.",
-              "Tính phí theo lộ trình phát triển tính năng của sản phẩm.",
-              "Không tùy chỉnh hệ thống theo yêu cầu riêng của từng doanh nghiệp/đơn vị."
-            ],
-            plusContent: [
-              "Miễn phí cập nhật các tính năng mới theo lộ trình phát triển sản phẩm (không bao gồm chi phí dịch vụ bên thứ ba).",
-              "Tùy chỉnh hệ thống theo nhu cầu và mong muốn riêng của doanh nghiệp/đơn vị nếu khả thi (có tính phí)."
-            ],
+            contents: {
+              Basic: [
+                "Tối ưu tất cả các tính năng hiện có của hệ thống.",
+                "Tính phí theo lộ trình phát triển tính năng của sản phẩm.",
+                "Không tùy chỉnh hệ thống theo yêu cầu riêng của từng doanh nghiệp/đơn vị."
+              ],
+              Plus: [
+                "Miễn phí cập nhật các tính năng mới theo lộ trình phát triển sản phẩm (không bao gồm chi phí dịch vụ bên thứ ba).",
+                "Tùy chỉnh hệ thống theo nhu cầu và mong muốn riêng của doanh nghiệp/đơn vị nếu khả thi (có tính phí)."
+              ]
+            },
             order: 6
           }
         ];

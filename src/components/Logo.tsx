@@ -206,7 +206,7 @@ export const IgenTechLogo: React.FC<{ className?: string }> = ({ className }) =>
       fill="#1D5FA3"
       letterSpacing="0.5"
     >
-      iGen Tech
+      iGen Technology
     </text>
   </svg>
 );
