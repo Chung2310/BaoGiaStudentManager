@@ -838,7 +838,13 @@ body {
 
 @media screen {
   .print-page.screen-hidden {
-    display: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
   }
 
   .print-page.screen-active {
@@ -900,11 +906,18 @@ body {
     display: flex !important;
     flex-direction: column;
     justify-content: space-between;
-    height: 100vh;
+    height: 100vh !important;
     page-break-after: always !important;
     page-break-inside: avoid !important;
     box-sizing: border-box;
     padding: 10px 0;
+    /* Reset off-screen positioning from screen-hidden */
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    overflow: visible !important;
   }
 
   .print-page:last-of-type {
