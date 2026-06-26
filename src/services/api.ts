@@ -187,4 +187,36 @@ export const api = {
       method: "DELETE",
     });
   },
+
+  // Packages
+  async getPackages(search?: string) {
+    const query = search ? `?search=${encodeURIComponent(search)}` : "";
+    const res = await request(`/packages${query}`);
+    return res.list;
+  },
+
+  async getAllPackages() {
+    const res = await request("/packages/all");
+    return res.data;
+  },
+
+  async createPackage(body: any) {
+    return request("/packages", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  },
+
+  async updatePackage(id: string, body: any) {
+    return request(`/packages/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    });
+  },
+
+  async deletePackage(id: string) {
+    return request(`/packages/${id}`, {
+      method: "DELETE",
+    });
+  },
 };

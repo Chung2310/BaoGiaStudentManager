@@ -36,10 +36,21 @@ const swaggerDefinition = {
         properties: {
           id: { type: "string" },
           studentRange: { type: "string", example: "0 - 100" },
-          basic6Month: { type: "number", example: 3 },
-          basic12Month: { type: "number", example: 5 },
-          plusFirstYear: { type: "number", example: 8 },
-          plusNextYears: { type: "number", example: 6 },
+          prices: {
+            type: "object",
+            additionalProperties: { type: "number" },
+            example: { basic6Month: 3, basic12Month: 5, plusFirstYear: 8, plusNextYears: 6 },
+          },
+          order: { type: "number", example: 1 },
+        },
+      },
+      Package: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          key: { type: "string", example: "basic6Month" },
+          name: { type: "string", example: "Gói 06 Tháng" },
+          group: { type: "string", example: "Basic" },
           order: { type: "number", example: 1 },
         },
       },
@@ -160,6 +171,87 @@ const swaggerDefinition = {
         responses: {
           200: { description: "Lấy thông tin thành công" },
           401: { description: "Chưa đăng nhập" },
+        },
+      },
+    },
+    "/packages": {
+      get: {
+        summary: "Lấy danh sách gói cước (Phân trang & Tìm kiếm)",
+        tags: ["Packages"],
+        parameters: [
+          { name: "page", in: "query", schema: { type: "integer" } },
+          { name: "limit", in: "query", schema: { type: "integer" } },
+          { name: "search", in: "query", schema: { type: "string" }, description: "Tìm kiếm theo tên hoặc nhóm gói cước" },
+        ],
+        responses: {
+          200: { description: "Lấy danh sách thành công" },
+        },
+      },
+      post: {
+        summary: "Tạo gói cước mới (Admin)",
+        tags: ["Packages"],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Package" },
+            },
+          },
+        },
+        responses: {
+          201: { description: "Tạo thành công" },
+          401: { description: "Chưa đăng nhập" },
+        },
+      },
+    },
+    "/packages/all": {
+      get: {
+        summary: "Lấy toàn bộ danh sách gói cước hoạt động không phân trang",
+        tags: ["Packages"],
+        responses: {
+          200: { description: "Lấy danh sách thành công" },
+        },
+      },
+    },
+    "/packages/{id}": {
+      get: {
+        summary: "Lấy chi tiết gói cước",
+        tags: ["Packages"],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Thành công" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      patch: {
+        summary: "Cập nhật gói cước (Admin)",
+        tags: ["Packages"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { type: "object" },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Cập nhật thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
+        },
+      },
+      delete: {
+        summary: "Xóa gói cước và tự động dọn dẹp giá trị tương ứng trong bảng giá (Admin)",
+        tags: ["Packages"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Xóa thành công" },
+          401: { description: "Chưa đăng nhập" },
+          404: { description: "Không tìm thấy" },
         },
       },
     },

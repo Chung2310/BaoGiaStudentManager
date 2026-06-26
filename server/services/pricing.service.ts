@@ -56,15 +56,51 @@ export class PricingService {
       if (count === 0) {
         logger.info(">>> Seeding default pricing data from PDF...");
         const defaultPricing = [
-          { studentRange: "0 - 100", basic6Month: 3, basic12Month: 5, plusFirstYear: 8, plusNextYears: 6, order: 1 },
-          { studentRange: "101 - 300", basic6Month: 5, basic12Month: 8, plusFirstYear: 12, plusNextYears: 10, order: 2 },
-          { studentRange: "301 - 500", basic6Month: 7, basic12Month: 12, plusFirstYear: 18, plusNextYears: 14, order: 3 },
-          { studentRange: "501 - 700", basic6Month: 12, basic12Month: 18, plusFirstYear: 27, plusNextYears: 22, order: 4 },
-          { studentRange: "701 – 1.000", basic6Month: 17, basic12Month: 27, plusFirstYear: 39, plusNextYears: 32, order: 5 },
-          { studentRange: "1.001 – 2.000", basic6Month: 22, basic12Month: 32, plusFirstYear: 48, plusNextYears: 39, order: 6 },
-          { studentRange: "2.001 – 3.000", basic6Month: 32, basic12Month: 45, plusFirstYear: 68, plusNextYears: 61, order: 7 },
-          { studentRange: "3.001 – 4.000", basic6Month: 40, basic12Month: 55, plusFirstYear: 84, plusNextYears: 78, order: 8 },
-          { studentRange: "4001-5000", basic6Month: 46, basic12Month: 63, plusFirstYear: 97, plusNextYears: 91, order: 9 },
+          {
+            studentRange: "0 - 100",
+            prices: { basic6Month: 3, basic12Month: 5, plusFirstYear: 8, plusNextYears: 6 },
+            order: 1,
+          },
+          {
+            studentRange: "101 - 300",
+            prices: { basic6Month: 5, basic12Month: 8, plusFirstYear: 12, plusNextYears: 10 },
+            order: 2,
+          },
+          {
+            studentRange: "301 - 500",
+            prices: { basic6Month: 7, basic12Month: 12, plusFirstYear: 18, plusNextYears: 14 },
+            order: 3,
+          },
+          {
+            studentRange: "501 - 700",
+            prices: { basic6Month: 12, basic12Month: 18, plusFirstYear: 27, plusNextYears: 22 },
+            order: 4,
+          },
+          {
+            studentRange: "701 – 1.000",
+            prices: { basic6Month: 17, basic12Month: 27, plusFirstYear: 39, plusNextYears: 32 },
+            order: 5,
+          },
+          {
+            studentRange: "1.001 – 2.000",
+            prices: { basic6Month: 22, basic12Month: 32, plusFirstYear: 48, plusNextYears: 39 },
+            order: 6,
+          },
+          {
+            studentRange: "2.001 – 3.000",
+            prices: { basic6Month: 32, basic12Month: 45, plusFirstYear: 68, plusNextYears: 61 },
+            order: 7,
+          },
+          {
+            studentRange: "3.001 – 4.000",
+            prices: { basic6Month: 40, basic12Month: 55, plusFirstYear: 84, plusNextYears: 78 },
+            order: 8,
+          },
+          {
+            studentRange: "4001-5000",
+            prices: { basic6Month: 46, basic12Month: 63, plusFirstYear: 97, plusNextYears: 91 },
+            order: 9,
+          },
         ];
         await Pricing.insertMany(defaultPricing);
         logger.info(">>> Seeded default pricing data successfully.");

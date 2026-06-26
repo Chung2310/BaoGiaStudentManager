@@ -12,28 +12,12 @@ export const idParamSchema = Joi.object({
 
 export const createPricingSchema = Joi.object({
   studentRange: Joi.string().required().messages({
-    "any.required": "Khoảng số học viên là bắt buộc.",
-    "string.empty": "Khoảng số học viên không được để trống.",
+    "any.required": "Khoảng số lượng/quy mô là bắt buộc.",
+    "string.empty": "Khoảng số lượng/quy mô không được để trống.",
   }),
-  basic6Month: Joi.number().required().min(0).messages({
-    "any.required": "Giá gói Basic 6 tháng là bắt buộc.",
-    "number.base": "Giá gói Basic 6 tháng phải là số.",
-    "number.min": "Giá gói Basic 6 tháng không được nhỏ hơn 0.",
-  }),
-  basic12Month: Joi.number().required().min(0).messages({
-    "any.required": "Giá gói Basic 12 tháng là bắt buộc.",
-    "number.base": "Giá gói Basic 12 tháng phải là số.",
-    "number.min": "Giá gói Basic 12 tháng không được nhỏ hơn 0.",
-  }),
-  plusFirstYear: Joi.number().required().min(0).messages({
-    "any.required": "Giá gói Plus năm đầu tiên là bắt buộc.",
-    "number.base": "Giá gói Plus năm đầu tiên phải là số.",
-    "number.min": "Giá gói Plus năm đầu tiên không được nhỏ hơn 0.",
-  }),
-  plusNextYears: Joi.number().required().min(0).messages({
-    "any.required": "Giá gói Plus năm tiếp theo là bắt buộc.",
-    "number.base": "Giá gói Plus năm tiếp theo phải là số.",
-    "number.min": "Giá gói Plus năm tiếp theo không được nhỏ hơn 0.",
+  prices: Joi.object().pattern(Joi.string(), Joi.number().min(0)).required().messages({
+    "any.required": "Danh sách giá các gói là bắt buộc.",
+    "object.base": "Danh sách giá các gói phải là một đối tượng.",
   }),
   order: Joi.number().integer().required().messages({
     "any.required": "Thứ tự sắp xếp là bắt buộc.",
@@ -43,10 +27,7 @@ export const createPricingSchema = Joi.object({
 
 export const updatePricingSchema = Joi.object({
   studentRange: Joi.string().optional(),
-  basic6Month: Joi.number().min(0).optional(),
-  basic12Month: Joi.number().min(0).optional(),
-  plusFirstYear: Joi.number().min(0).optional(),
-  plusNextYears: Joi.number().min(0).optional(),
+  prices: Joi.object().pattern(Joi.string(), Joi.number().min(0)).optional(),
   order: Joi.number().integer().optional(),
 });
 

@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../services/api";
 
+interface PackageItem {
+  _id: string;
+  key: string;
+  name: string;
+  group: string;
+  order: number;
+}
+
 interface PricingItem {
   _id: string;
   studentRange: string;
-  basic6Month: number;
-  basic12Month: number;
-  plusFirstYear: number;
-  plusNextYears: number;
+  prices: Record<string, number>;
   order: number;
 }
 
@@ -28,8 +33,9 @@ interface ServiceItem {
 }
 
 export const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"pricing" | "features" | "services">("pricing");
+  const [activeTab, setActiveTab] = useState<"pricing" | "packages" | "features" | "services">("pricing");
   const [pricingList, setPricingList] = useState<PricingItem[]>([]);
+  const [packageList, setPackageList] = useState<PackageItem[]>([]);
   const [featureList, setFeatureList] = useState<FeatureItem[]>([]);
   const [serviceList, setServiceList] = useState<ServiceItem[]>([]);
   
@@ -41,12 +47,21 @@ export const AdminDashboard: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   
   // Pricing Form States
-  const [pricingForm, setPricingForm] = useState({
+  const [pricingForm, setPricingForm] = useState<{
+    studentRange: string;
+    prices: Record<string, number>;
+    order: number;
+  }>({
     studentRange: "",
-    basic6Month: 0,
-    basic12Month: 0,
-    plusFirstYear: 0,
-    plusNextYears: 0,
+    prices: {},
+    order: 0,
+  });
+
+  // Package Form States
+  const [packageForm, setPackageForm] = useState({
+    key: "",
+    name: "",
+    group: "",
     order: 0,
   });
 
@@ -71,9 +86,16 @@ export const AdminDashboard: React.FC = () => {
       setLoading(true);
       setError("");
       setEditingId(null);
+      
+      // Always load packages because they are needed to render/edit pricing items
+      const packages = await api.getAllPackages();
+      setPackageList(packages);
+
       if (activeTab === "pricing") {
         const data = await api.getPricing();
         setPricingList(data);
+      } else if (activeTab === "packages") {
+        // packageList is already set
       } else if (activeTab === "features") {
         const data = await api.getFeatures();
         setFeatureList(data);
@@ -93,6 +115,24 @@ export const AdminDashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
+  // Sync pricingForm's prices with all active package keys when packages are loaded
+  useEffect(() => {
+    if (packageList.length > 0) {
+      setPricingForm((prev) => {
+        const updatedPrices = { ...prev.prices };
+        packageList.forEach((pkg) => {
+          if (updatedPrices[pkg.key] === undefined) {
+            updatedPrices[pkg.key] = 0;
+          }
+        });
+        return {
+          ...prev,
+          prices: updatedPrices,
+        };
+      });
+    }
+  }, [packageList]);
+
   const showSuccess = (msg: string) => {
     setSuccessMsg(msg);
     setTimeout(() => setSuccessMsg(""), 3000);
@@ -101,12 +141,13 @@ export const AdminDashboard: React.FC = () => {
   // Pricing CRUD Handlers
   const handlePricingEdit = (item: PricingItem) => {
     setEditingId(item._id);
+    const initialPrices: Record<string, number> = {};
+    packageList.forEach((pkg) => {
+      initialPrices[pkg.key] = item.prices ? item.prices[pkg.key] ?? 0 : 0;
+    });
     setPricingForm({
       studentRange: item.studentRange,
-      basic6Month: item.basic6Month,
-      basic12Month: item.basic12Month,
-      plusFirstYear: item.plusFirstYear,
-      plusNextYears: item.plusNextYears,
+      prices: initialPrices,
       order: item.order,
     });
   };
@@ -129,17 +170,20 @@ export const AdminDashboard: React.FC = () => {
       setError("");
       await api.createPricing(pricingForm);
       showSuccess("Thêm mới khoảng giá thành công!");
+      
+      const resetPrices: Record<string, number> = {};
+      packageList.forEach((pkg) => {
+        resetPrices[pkg.key] = 0;
+      });
+      
       setPricingForm({
         studentRange: "",
-        basic6Month: 0,
-        basic12Month: 0,
-        plusFirstYear: 0,
-        plusNextYears: 0,
+        prices: resetPrices,
         order: pricingList.length + 1,
       });
       loadData();
     } catch (err: any) {
-      setError(err.message || "Lỗi tạo mới");
+      setError(err.message || "Lỗi tạo mới khoảng giá");
     }
   };
 
@@ -151,7 +195,60 @@ export const AdminDashboard: React.FC = () => {
       showSuccess("Xóa khoảng giá thành công!");
       loadData();
     } catch (err: any) {
-      setError(err.message || "Lỗi xóa");
+      setError(err.message || "Lỗi xóa khoảng giá");
+    }
+  };
+
+  // Package CRUD Handlers
+  const handlePackageEdit = (item: PackageItem) => {
+    setEditingId(item._id);
+    setPackageForm({
+      key: item.key,
+      name: item.name,
+      group: item.group,
+      order: item.order,
+    });
+  };
+
+  const handlePackageSave = async (id: string) => {
+    try {
+      setError("");
+      await api.updatePackage(id, packageForm);
+      showSuccess("Cập nhật gói cước thành công!");
+      setEditingId(null);
+      loadData();
+    } catch (err: any) {
+      setError(err.message || "Lỗi cập nhật gói cước");
+    }
+  };
+
+  const handlePackageCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setError("");
+      await api.createPackage(packageForm);
+      showSuccess("Thêm mới gói cước thành công!");
+      setPackageForm({
+        key: "",
+        name: "",
+        group: "",
+        order: packageList.length + 1,
+      });
+      loadData();
+    } catch (err: any) {
+      setError(err.message || "Lỗi tạo mới gói cước");
+    }
+  };
+
+  const handlePackageDelete = async (id: string) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa gói cước này không? Tất cả giá tương ứng trong bảng giá sẽ bị xóa bỏ!")) return;
+    try {
+      setError("");
+      await api.deletePackage(id);
+      showSuccess("Xóa gói cước thành công!");
+      loadData();
+    } catch (err: any) {
+      setError(err.message || "Lỗi xóa gói cước");
     }
   };
 
@@ -289,7 +386,7 @@ export const AdminDashboard: React.FC = () => {
     <div className="admin-dashboard fade-in">
       <div className="admin-header">
         <h2>BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN</h2>
-        <p className="admin-desc">Quản lý và chỉnh sửa trực tiếp các thông số bảng giá, tính năng, và dịch vụ khách hàng.</p>
+        <p className="admin-desc">Quản lý và chỉnh sửa trực tiếp các thông số bảng giá, gói cước, tính năng, và dịch vụ khách hàng.</p>
       </div>
 
       {/* Tabs */}
@@ -299,6 +396,12 @@ export const AdminDashboard: React.FC = () => {
           onClick={() => setActiveTab("pricing")}
         >
           Trang 1: Bảng Giá
+        </button>
+        <button
+          className={`admin-tab-btn ${activeTab === "packages" ? "active" : ""}`}
+          onClick={() => setActiveTab("packages")}
+        >
+          Quản lý Gói cước
         </button>
         <button
           className={`admin-tab-btn ${activeTab === "features" ? "active" : ""}`}
@@ -332,10 +435,9 @@ export const AdminDashboard: React.FC = () => {
                   <thead>
                     <tr>
                       <th>Số học viên</th>
-                      <th>Basic 6T</th>
-                      <th>Basic 12T</th>
-                      <th>Plus Năm đầu</th>
-                      <th>Plus Năm tiếp</th>
+                      {packageList.map((pkg) => (
+                        <th key={pkg.key}>{pkg.name} ({pkg.group})</th>
+                      ))}
                       <th>Thứ tự</th>
                       <th>Thao tác</th>
                     </tr>
@@ -353,38 +455,25 @@ export const AdminDashboard: React.FC = () => {
                                 onChange={(e) => setPricingForm({ ...pricingForm, studentRange: e.target.value })}
                               />
                             </td>
-                            <td>
-                              <input
-                                type="number"
-                                className="form-input text-center"
-                                value={pricingForm.basic6Month}
-                                onChange={(e) => setPricingForm({ ...pricingForm, basic6Month: Number(e.target.value) })}
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="number"
-                                className="form-input text-center"
-                                value={pricingForm.basic12Month}
-                                onChange={(e) => setPricingForm({ ...pricingForm, basic12Month: Number(e.target.value) })}
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="number"
-                                className="form-input text-center"
-                                value={pricingForm.plusFirstYear}
-                                onChange={(e) => setPricingForm({ ...pricingForm, plusFirstYear: Number(e.target.value) })}
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="number"
-                                className="form-input text-center"
-                                value={pricingForm.plusNextYears}
-                                onChange={(e) => setPricingForm({ ...pricingForm, plusNextYears: Number(e.target.value) })}
-                              />
-                            </td>
+                            {packageList.map((pkg) => (
+                              <td key={pkg.key}>
+                                <input
+                                  type="number"
+                                  className="form-input text-center"
+                                  value={pricingForm.prices[pkg.key] ?? 0}
+                                  onChange={(e) => {
+                                    const val = Number(e.target.value);
+                                    setPricingForm({
+                                      ...pricingForm,
+                                      prices: {
+                                        ...pricingForm.prices,
+                                        [pkg.key]: val,
+                                      },
+                                    });
+                                  }}
+                                />
+                              </td>
+                            ))}
                             <td>
                               <input
                                 type="number"
@@ -402,14 +491,93 @@ export const AdminDashboard: React.FC = () => {
                         ) : (
                           <>
                             <td className="font-bold">{item.studentRange}</td>
-                            <td className="text-center">{item.basic6Month} triệu</td>
-                            <td className="text-center">{item.basic12Month} triệu</td>
-                            <td className="text-center font-bold text-primary">{item.plusFirstYear} triệu</td>
-                            <td className="text-center font-bold text-primary">{item.plusNextYears} triệu</td>
+                            {packageList.map((pkg) => (
+                              <td key={pkg.key} className="text-center font-bold">
+                                {item.prices?.[pkg.key] !== undefined ? `${item.prices[pkg.key]} triệu` : "-"}
+                              </td>
+                            ))}
                             <td className="text-center">{item.order}</td>
                             <td className="actions-cell">
                               <button className="btn btn-edit" onClick={() => handlePricingEdit(item)}>Sửa</button>
                               <button className="btn btn-delete" onClick={() => handlePricingDelete(item._id)}>Xóa</button>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {activeTab === "packages" && (
+              <div className="table-responsive">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Mã Khóa (key)</th>
+                      <th>Tên Gói Cước</th>
+                      <th>Nhóm (group)</th>
+                      <th>Thứ tự</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {packageList.map((item) => (
+                      <tr key={item._id} className={editingId === item._id ? "row-editing" : ""}>
+                        {editingId === item._id ? (
+                          <>
+                            <td>
+                              <input
+                                type="text"
+                                className="form-input"
+                                value={packageForm.key}
+                                onChange={(e) => setPackageForm({ ...packageForm, key: e.target.value })}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                className="form-input"
+                                value={packageForm.name}
+                                onChange={(e) => setPackageForm({ ...packageForm, name: e.target.value })}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                className="form-input"
+                                value={packageForm.group}
+                                onChange={(e) => setPackageForm({ ...packageForm, group: e.target.value })}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                type="number"
+                                className="form-input text-center"
+                                style={{ width: "60px" }}
+                                value={packageForm.order}
+                                onChange={(e) => setPackageForm({ ...packageForm, order: Number(e.target.value) })}
+                              />
+                            </td>
+                            <td className="actions-cell">
+                              <button className="btn btn-save" onClick={() => handlePackageSave(item._id)}>Lưu</button>
+                              <button className="btn btn-cancel" onClick={() => setEditingId(null)}>Hủy</button>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="font-bold font-mono">{item.key}</td>
+                            <td>{item.name}</td>
+                            <td>
+                              <span style={{ padding: "4px 8px", backgroundColor: "rgba(29, 95, 163, 0.1)", color: "#1d5fa3", borderRadius: "4px", fontSize: "13px", fontWeight: "600" }}>
+                                {item.group}
+                              </span>
+                            </td>
+                            <td className="text-center">{item.order}</td>
+                            <td className="actions-cell">
+                              <button className="btn btn-edit" onClick={() => handlePackageEdit(item)}>Sửa</button>
+                              <button className="btn btn-delete" onClick={() => handlePackageDelete(item._id)}>Xóa</button>
                             </td>
                           </>
                         )}
@@ -604,50 +772,30 @@ export const AdminDashboard: React.FC = () => {
                     onChange={(e) => setPricingForm({ ...pricingForm, studentRange: e.target.value })}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Basic - Gói 06 Tháng (triệu VNĐ)</label>
-                  <input
-                    type="number"
-                    className="form-input"
-                    min={0}
-                    required
-                    value={pricingForm.basic6Month}
-                    onChange={(e) => setPricingForm({ ...pricingForm, basic6Month: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Basic - Gói 12 Tháng (triệu VNĐ)</label>
-                  <input
-                    type="number"
-                    className="form-input"
-                    min={0}
-                    required
-                    value={pricingForm.basic12Month}
-                    onChange={(e) => setPricingForm({ ...pricingForm, basic12Month: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Plus - Năm Đầu Tiên (triệu VNĐ)</label>
-                  <input
-                    type="number"
-                    className="form-input"
-                    min={0}
-                    required
-                    value={pricingForm.plusFirstYear}
-                    onChange={(e) => setPricingForm({ ...pricingForm, plusFirstYear: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Plus - Năm Tiếp Theo (triệu VNĐ)</label>
-                  <input
-                    type="number"
-                    className="form-input"
-                    min={0}
-                    required
-                    value={pricingForm.plusNextYears}
-                    onChange={(e) => setPricingForm({ ...pricingForm, plusNextYears: Number(e.target.value) })}
-                  />
-                </div>
+                
+                {packageList.map((pkg) => (
+                  <div className="form-group" key={pkg.key}>
+                    <label>{pkg.group} - {pkg.name} (triệu VNĐ)</label>
+                    <input
+                      type="number"
+                      className="form-input"
+                      min={0}
+                      required
+                      value={pricingForm.prices[pkg.key] ?? 0}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setPricingForm({
+                          ...pricingForm,
+                          prices: {
+                            ...pricingForm.prices,
+                            [pkg.key]: val,
+                          },
+                        });
+                      }}
+                    />
+                  </div>
+                ))}
+
                 <div className="form-group">
                   <label>Thứ tự sắp xếp (số)</label>
                   <input
@@ -659,6 +807,58 @@ export const AdminDashboard: React.FC = () => {
                   />
                 </div>
                 <button type="submit" className="btn btn-submit">Thêm Khoảng Giá</button>
+              </form>
+            )}
+
+            {activeTab === "packages" && (
+              <form onSubmit={handlePackageCreate} className="admin-form">
+                <div className="form-group">
+                  <label>Mã Khóa (key)</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Ví dụ: basic6Month"
+                    required
+                    value={packageForm.key}
+                    onChange={(e) => setPackageForm({ ...packageForm, key: e.target.value })}
+                  />
+                  <small style={{ color: "var(--text-muted)", fontSize: "11px", marginTop: "4px", display: "block" }}>
+                    Chỉ dùng chữ cái không dấu, chữ số và gạch dưới.
+                  </small>
+                </div>
+                <div className="form-group">
+                  <label>Tên Gói Cước</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Ví dụ: Gói 06 Tháng"
+                    required
+                    value={packageForm.name}
+                    onChange={(e) => setPackageForm({ ...packageForm, name: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Nhóm Gói Cước (group)</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Ví dụ: Basic, Plus, Premium"
+                    required
+                    value={packageForm.group}
+                    onChange={(e) => setPackageForm({ ...packageForm, group: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Thứ tự sắp xếp (số)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    required
+                    value={packageForm.order}
+                    onChange={(e) => setPackageForm({ ...packageForm, order: Number(e.target.value) })}
+                  />
+                </div>
+                <button type="submit" className="btn btn-submit">Thêm Gói Cước</button>
               </form>
             )}
 

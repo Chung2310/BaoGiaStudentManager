@@ -81,7 +81,7 @@ export class FeatureService {
             order: 2
           },
           {
-            category: "CMR",
+            category: "CRM",
             basicContent: [
               "Quản lý khách hàng tiềm năng",
               "Quản lý lịch hẹn khách hàng",

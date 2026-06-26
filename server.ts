@@ -17,6 +17,7 @@ import { AuthService } from "./server/services/auth.service";
 import { PricingService } from "./server/services/pricing.service";
 import { FeatureService } from "./server/services/feature.service";
 import { ServiceService } from "./server/services/service.service";
+import { PackageService } from "./server/services/package.service";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ async function startServer() {
 
   // Seed Default System Data (Admin user, pricing values, features, services)
   await AuthService.seedAdmin();
+  await PackageService.seedDefaultData();
   await PricingService.seedDefaultData();
   await FeatureService.seedDefaultData();
   await ServiceService.seedDefaultData();
@@ -34,18 +36,36 @@ async function startServer() {
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3005;
 
   // Configure CORS securely using LINK_COR environment variable
-  const allowedOrigins = process.env.LINK_COR 
-    ? process.env.LINK_COR.split(",").map(o => o.trim().replace(/\/$/, "")) 
+  const allowedOrigins = process.env.LINK_COR
+    ? process.env.LINK_COR.split(",")
+        .map(o => o.trim())
+        .filter(Boolean)
+        .map(o => o.replace(/\/$/, ""))
     : ["http://localhost:3005"];
+    
+  // Proactively whitelist local address for development & Swagger API Docs
+  const localOrigin = `http://localhost:${PORT}`;
+  const local127 = `http://127.0.0.1:${PORT}`;
+  if (!allowedOrigins.includes(localOrigin)) allowedOrigins.push(localOrigin);
+  if (!allowedOrigins.includes(local127)) allowedOrigins.push(local127);
     
   app.use(
     cors({
       origin: (origin, callback) => {
-        const cleanOrigin = origin ? origin.trim().replace(/\/$/, "") : "";
-        if (!origin || allowedOrigins.indexOf(cleanOrigin) !== -1 || allowedOrigins.includes("*")) {
+        if (!origin) {
+          return callback(null, true);
+        }
+        const cleanOrigin = origin.trim().replace(/\/$/, "");
+        const isAllowed = allowedOrigins.some(allowed => {
+          if (allowed === "*") return true;
+          return allowed.replace(/\/$/, "") === cleanOrigin;
+        });
+
+        if (isAllowed) {
           callback(null, true);
         } else {
-          callback(new Error("Không được phép bởi CORS"));
+          logger.warn(`[CORS] Blocked access from unauthorized origin: ${origin}`);
+          callback(new Error(`Không được phép bởi CORS cho origin: ${origin}`));
         }
       },
       credentials: true,

@@ -9,21 +9,10 @@ const pricingSchema = new Schema<IPricing>(
       trim: true,
       index: true,
     },
-    basic6Month: {
-      type: Number,
-      required: true,
-    },
-    basic12Month: {
-      type: Number,
-      required: true,
-    },
-    plusFirstYear: {
-      type: Number,
-      required: true,
-    },
-    plusNextYears: {
-      type: Number,
-      required: true,
+    prices: {
+      type: Map,
+      of: Number,
+      default: {},
     },
     order: {
       type: Number,
