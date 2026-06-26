@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   baogia-erp:
-    image: ghcr.io/chung2310/baogia-erp:${IMAGE_TAG:-latest}
+    image: ghcr.io/chung2310/baogiastudentmanager:${IMAGE_TAG:-latest}
     container_name: ${CONTAINER_NAME:-baogia-erp}
     restart: always
     ports:
