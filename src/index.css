@@ -920,32 +920,25 @@ body {
     background: transparent !important;
   }
 
+  /* Ẩn tất cả print-page mặc định, chỉ hiện trang đang active */
   .print-page {
-    display: flex !important;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh !important;
-    page-break-after: always !important;
-    page-break-inside: avoid !important;
-    box-sizing: border-box;
-    padding: 10px 0 !important;
-    margin: 0 !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    overflow: visible !important;
+    display: none !important;
   }
 
-  .print-page.screen-hidden {
-    height: 100vh !important;
-    overflow: visible !important;
-    opacity: 1 !important;
+  /* Chỉ hiện và in trang đang được chọn */
+  .print-page.screen-active {
     display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    box-sizing: border-box !important;
     padding: 10px 0 !important;
     margin: 0 !important;
-  }
-
-  .print-page:last-of-type {
+    break-after: avoid !important;
     page-break-after: avoid !important;
+    overflow: visible !important;
   }
 
   .print-only-header {
