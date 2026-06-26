@@ -844,6 +844,41 @@ body {
   transform: translateY(-2px);
 }
 
+/* Print orientation controls */
+.print-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-orientation {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-title);
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.btn-orientation:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-orientation.active {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--primary-color);
+  border-color: #fff;
+  font-weight: 700;
+}
+
+
 /* Media Print Customizations */
 .print-only-header,
 .print-only-footer {
@@ -898,7 +933,8 @@ body {
   .btn-logout,
   .admin-dashboard,
   .modal-overlay,
-  .main-footer {
+  .main-footer,
+  .print-controls {
     display: none !important;
   }
 

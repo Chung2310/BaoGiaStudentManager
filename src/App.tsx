@@ -48,6 +48,7 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"pricing" | "features" | "services">("pricing");
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [printOrientation, setPrintOrientation] = useState<"landscape" | "portrait">("landscape");
 
   // Auth Modal States
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -98,6 +99,19 @@ export const App: React.FC = () => {
     setIsAdminMode(false);
   };
 
+  const handlePrint = () => {
+    // Inject dynamic @page orientation style
+    const styleId = "dynamic-print-orientation";
+    let el = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!el) {
+      el = document.createElement("style");
+      el.id = styleId;
+      document.head.appendChild(el);
+    }
+    el.textContent = `@media print { @page { size: A4 ${printOrientation}; margin: 8mm 12mm; } }`;
+    window.print();
+  };
+
   return (
     <div className="app-container">
       {/* Top Brand Header */}
@@ -141,9 +155,27 @@ export const App: React.FC = () => {
 
           <div className="nav-actions">
             {!isAdminMode && (
-              <button className="btn-print" onClick={() => window.print()}>
-                <FileDown size={16} /> Xuất PDF
-              </button>
+              <div className="print-controls">
+                <button
+                  id="btn-orientation-toggle"
+                  className={`btn-orientation ${printOrientation === "landscape" ? "active" : ""}`}
+                  onClick={() => setPrintOrientation("landscape")}
+                  title="In ngang (Landscape)"
+                >
+                  ⬛ Ngang
+                </button>
+                <button
+                  id="btn-orientation-portrait"
+                  className={`btn-orientation ${printOrientation === "portrait" ? "active" : ""}`}
+                  onClick={() => setPrintOrientation("portrait")}
+                  title="In dọc (Portrait)"
+                >
+                  📄 Dọc
+                </button>
+                <button className="btn-print" onClick={handlePrint}>
+                  <FileDown size={16} /> Xuất PDF
+                </button>
+              </div>
             )}
             {isAdminMode ? (
               <button className="btn-admin" onClick={() => setIsAdminMode(false)}>
