@@ -17,6 +17,12 @@ interface FooterInfo {
   apply_date: string;
 }
 
+interface ProjectItem {
+  _id: string;
+  name: string;
+  description?: string;
+}
+
 const defaultFooter: FooterInfo = {
   company_name: "CÔNG TY CỔ PHẦN CÔNG NGHỆ IGEN",
   address: "Lô LK3 LK4 Đường Lạc Long Quân, Phường Kinh Bắc, Thành phố Bắc Ninh, Tỉnh Bắc Ninh, Việt Nam",
@@ -89,6 +95,7 @@ export const App: React.FC = () => {
   const [printScope, setPrintScope] = useState<"current" | "all">("current");
   const [footerInfo, setFooterInfo] = useState<FooterInfo>(defaultFooter);
   const [activeProjectId, setActiveProjectId] = useState<string | undefined>(undefined);
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
 
   // Auth Modal States
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -129,15 +136,16 @@ export const App: React.FC = () => {
     loadSettings();
     const resolveProject = async () => {
       const urlParam = new URLSearchParams(window.location.search).get("project");
-      if (urlParam) {
-        setActiveProjectId(urlParam);
-      } else {
-        try {
-          const projects = await api.getProjects();
-          if (projects && projects.length > 0) setActiveProjectId(projects[0]._id);
-        } catch {
-          // fallback: no project filter
+      try {
+        const projectList = await api.getProjects();
+        setProjects(projectList || []);
+        if (urlParam && projectList?.some((project: ProjectItem) => project._id === urlParam)) {
+          setActiveProjectId(urlParam);
+        } else if (projectList && projectList.length > 0) {
+          setActiveProjectId(projectList[0]._id);
         }
+      } catch {
+        // fallback: no project filter
       }
     };
     resolveProject();
@@ -260,6 +268,21 @@ export const App: React.FC = () => {
         ) : (
           <>
             {!isAdminMode && (
+              <>
+              {projects.length > 1 && (
+                <div className="public-project-selector">
+                  <label htmlFor="public-project-select">Dự án báo giá</label>
+                  <select
+                    id="public-project-select"
+                    value={activeProjectId || ""}
+                    onChange={(e) => setActiveProjectId(e.target.value || undefined)}
+                  >
+                    {projects.map((project) => (
+                      <option key={project._id} value={project._id}>{project.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div className="print-float-panel" id="print-float-panel">
                 <div className="print-float-label">Phạm vi xuất</div>
                 <div className="print-float-scopes">
@@ -286,6 +309,7 @@ export const App: React.FC = () => {
                   Xuất PDF
                 </button>
               </div>
+              </>
             )}
             {/* Page 1: Pricing */}
             <div className={`print-page print-page-first ${activeTab === "pricing" ? "screen-active" : "screen-hidden"}`}>
