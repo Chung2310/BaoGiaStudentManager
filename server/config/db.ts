@@ -12,11 +12,11 @@ export async function connectDB() {
   if (user && pass) {
     const protocol = uri.startsWith("mongodb+srv://") ? "mongodb+srv://" : "mongodb://";
     const uriWithoutProtocol = uri.replace(protocol, "");
-    
+
     if (!uriWithoutProtocol.includes("@")) {
       connectionUri = `${protocol}${encodeURIComponent(user)}:${encodeURIComponent(pass)}@${uriWithoutProtocol}`;
     }
-    
+    console.log(" ");
     if (authSource && !connectionUri.includes("authSource=")) {
       const separator = connectionUri.includes("?") ? "&" : "?";
       connectionUri = `${connectionUri}${separator}authSource=${authSource}`;
